@@ -1,8 +1,9 @@
 const clockElement = document.getElementById("clock");
+let updateTimer;
 
 function updateClock() {
     clockElement.innerHTML = new Date().toTimeString().split(" ")[0];
-    setTimeout(updateClock, 1000);
+    setTimeout(updateClock, 500);
 }
 
 // Workaround for ä not working in the html
@@ -14,7 +15,13 @@ getJson();
 
 function getJson() {
     let req = new XMLHttpRequest();
+    req.timeout = 10000;
     req.addEventListener("load", updateScreen);
+    req.addEventListener("timeout", e => {
+        console.error(e);
+        clearTimeout(updateTimer);
+        updateTimer = setTimeout(getJson, 5000);
+    });
     req.open("GET", "/getinfo");
     req.send();
 }
@@ -41,7 +48,8 @@ function updateScreen() {
     printDepartures("kapellplatsen", data.kapellplatsen);
 
     // Update in 15 seconds
-    setTimeout(getJson, 15000);
+    clearTimeout(updateTimer);
+    updateTimer = setTimeout(getJson, 15000);
 }
 
 function printDisruption(data) {
