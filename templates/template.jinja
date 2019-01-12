@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="static/css.css">
+    <title>Johanneberg</title>
+</head>
+<body>
+    <header>
+        <h1 id="clock">00:00</h1>
+        <img src="static/JohanneBerg.png" alt="NTI Johanneberg">
+    </header>
+
+    {% for stop in stops: %}
+        <div id="{{ stop[0].replace(" ", "") }}">
+            <h1>{{ stop[0] }}</h1>
+            {% if stop[1] != "Inga avgångar hittade!": %}
+                <table>
+                    {% for dep in stop[1]: %}
+                        <tr>
+                            <td id="line" style="background-color: {{ dep.get("fgColor") }}; color: {{ dep.get("bgColor") }};">
+                                {{ dep.get("sname") }}
+                            </td>
+                            <td class="destination">{{ dep.get("direction") }}</td>
+                            <td id="dep">{{ dep.get("departures")[0] }}</td>
+                            <td id="dep">{{ dep.get("departures")[1] }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>    
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <div id="skolmaten">
+        <h1>Skolmaten</h1>
+    </div>
+
+    <script src="static/clock.js"></script>
+</body>
+</html>
