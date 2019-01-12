@@ -6,8 +6,6 @@ import vasttrafik
 
 app = Flask(__name__)
 
-
-
 # Update every 10 minutes
 # Return list of tuples
 def get_disruptions():
@@ -15,39 +13,46 @@ def get_disruptions():
         situation["updated"] = datetime.now()
         situation["situations"] = get_trafficsituation()
     if len(situation["situations"]) > 0:
+        # Cycle thourough the disruptions if there are more than one
         situation["previous_shown"] = (situation["previous_shown"] + 1) % len(situation["situations"])
         return situation["situations"][ situation["previous_shown"]]
     else:
         return None
 
-
+# Get the lastest disruptions from västtrafik
 def get_trafficsituation():
     print("Updating disruptions")
     arr = []
     traffic = ts.trafficsituations()
     for situation in traffic:
+        # Skip disruptions which aren't classed as 'severe'
         if situation.get("severity") != "severe":
             continue
         for stop in situation.get("affectedStopPoints"):
             name = stop.get("name")
-            if name == "Chalmers" or name == "Kapellplatsen" or name == "Chalmers Tvärgata" or name == "Chalmersplatsen": # Vasaplatsen
+            # Get only disruptions concerning the nearby stops
+            if name == "Chalmers" or name == "Kapellplatsen" or name == "Chalmers Tvärgata" or name == "Chalmersplatsen":
+                # Skip night-only disruptions
                 if not "nattetid" in situation.get("description").lower():
                     arr.append(situation)
 
     outarr = []
     for situation in arr:
+        # Get the start time and current time
         timeformat = "%Y-%m-%dT%H%M%S%z" # Format from västtrafik
         time = situation.get("startTime").replace(":", "")
         time = datetime.strptime(time, timeformat)
         now = datetime.now(timezone.utc)
+        # Add it to the output array only if the disruption has started
         if time <= now:
             relevant = (situation.get("title"), situation.get("description"))
+            # Skip duplicates
             if relevant not in outarr:
                 outarr.append(relevant)
 
     return outarr
 
-
+# Get 2 departures per line and destination within 1 hour
 def get_departures(stop):
     departures = vt.departureBoard(id=stop, date=strftime("%Y%m%d"), time=strftime("%H:%M"), timeSpan=60, maxDeparturesPerLine=2)
     return departures.get("DepartureBoard").get("Departure")
@@ -75,12 +80,12 @@ def format_departures(departures):
                 "bgColor": dep.get("bgColor")
             })
             continue
-            print("Something has gone wrong")
 
         i = 0
         added = False
         while i < len(arr):
-            # print(arr[i].get("sname") == dep.get("sname"), arr[i].get("direction") == dep.get("direction"))
+            # Check if one similar departure is in the list
+            # Add the second departure time to the departure dict
             if arr[i].get("sname") == dep.get("sname") and arr[i].get("direction") == dep.get("direction"):
                 added = True
                 if len(arr[i].get("departures")) >= 2:
@@ -91,6 +96,8 @@ def format_departures(departures):
                     # print(arr[i]["departures"])
             i += 1
 
+        # No similar departure in the list
+        # Add the relevant info to a dict
         if not added:
             arr.append({
                 "sname": dep.get("sname"),
@@ -103,13 +110,14 @@ def format_departures(departures):
 
 
 def sort_departures(arr):
+    # Sort firstly by line number and secondly by destination
     sorted_by_destination = sorted(arr, key=lambda dep: dep["direction"])
     sorted_by_line = sorted(sorted_by_destination, key=lambda dep: int(dep['sname']))
     return sorted_by_line
 
 
+# Get minutes until departure
 def calculate_minutes(departure):
-    # Does not work when passing midnight
     d_time = departure.get("rtTime")
     if d_time == None:
         realtime = False
@@ -117,16 +125,21 @@ def calculate_minutes(departure):
     else:
         realtime = True
 
-    hr, mn = d_time.split(":")
-    mn = int(mn)
-    mn += int(hr) * 60
+    # Convert it all to minutes
+    hour, minutes = d_time.split(":")
+    minutes = int(minutes)
+    minutes += int(hour) * 60
     # Minutes since midnight
 
     # Now:
-    n_mn = int(strftime("%M")) + int(strftime("%H")) * 60
+    minutes_now = int(strftime("%M")) + int(strftime("%H")) * 60
 
     # Time left:
-    countdown = mn - n_mn
+    countdown = minutes - minutes_now
+
+    if countdown < -1300:
+        # Past midnight, 24 hours = 1440 min
+        countdown += 1440
 
     if realtime:
         if countdown <= 0:
@@ -136,6 +149,7 @@ def calculate_minutes(departure):
     else:
         return f'Ca {countdown}'
 
+
 # -------- INIT  --------
 with open("creds.txt") as f:
     key, secret = f.readlines()
@@ -144,11 +158,13 @@ auth = vasttrafik.Auth(key.strip(), secret.strip(), 1)
 vt = vasttrafik.Reseplaneraren(auth)
 ts = vasttrafik.TrafficSituations(auth)
 
+# Stop ids
 chalmers_id = 9021014001960000
 chalmers_tg_id = 9021014001970000
 chalmersplatsen_id = 9021014001961000
 kapellplatsen_id = 9021014003760000
 
+# Traffic disruptions
 situation = {
     "updated": datetime.now(),
     "previous_shown": 0,
