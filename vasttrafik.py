@@ -21,7 +21,6 @@ class Reseplaneraren():
 
 
     def __renew_token(self):
-        print(self.__credentials)
         header = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Basic " + self.__credentials
@@ -29,7 +28,6 @@ class Reseplaneraren():
         url = f'https://api.vasttrafik.se/token?grant_type=client_credentials&scope=device_{self.scope}'
         response = requests.post(url, headers=header)
 
-        print(response.text)
         response_dict = response.json()
 
         if response.status_code != 200:

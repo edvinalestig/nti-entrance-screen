@@ -16,7 +16,7 @@ kapellplatsen_id = 9021014003760000
 
 
 def get_departures(stop):
-    departures = vt.departureBoard(id=stop, date=strftime("%Y%m%d"), time=strftime("%H:%M"))
+    departures = vt.departureBoard(id=stop, date=strftime("%Y%m%d"), time=strftime("%H:%M"), timeSpan=60, maxDeparturesPerLine=2)
     return departures.get("DepartureBoard").get("Departure")
 
 
@@ -70,8 +70,9 @@ def format_departures(departures):
 
 
 def sort_departures(arr):
-    print(arr)
-    return sorted(arr, key=lambda dep: int(dep['sname']))
+    sorted_by_destination = sorted(arr, key=lambda dep: dep["direction"])
+    sorted_by_line = sorted(sorted_by_destination, key=lambda dep: int(dep['sname']))
+    return sorted_by_line
 
 
 def calculate_minutes(departure):
@@ -95,7 +96,7 @@ def calculate_minutes(departure):
     countdown = mn - n_mn
 
     if realtime:
-        if countdown == 0:
+        if countdown <= 0:
             return "Nu"
         else:
             return countdown
@@ -112,6 +113,5 @@ def index():
     cpdep = format_departures(get_departures(chalmersplatsen_id))
     kdep = format_departures(get_departures(kapellplatsen_id))
     stops = (("Chalmers", cdep), ("Kapellplatsen", kdep), ("Chalmers Tvärgata", ctgdep), ("Chalmersplatsen", cpdep))
-    print("--------------\n", stops, "\n--------------\n")
 
     return render_template("template.jinja", stops=stops)

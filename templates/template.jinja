@@ -10,26 +10,26 @@
 <body>
     <header>
         <h1 id="clock">00:00</h1>
+        <img src="static/JohanneBerg.png" alt="NTI Johanneberg">
     </header>
 
     {% for stop in stops: %}
-        <div>
+        <div id="{{ stop[0].replace(" ", "") }}">
             <h1>{{ stop[0] }}</h1>
-            <table>
-                {% if stop[1] != "Inga avgångar hittade!": %}
+            {% if stop[1] != "Inga avgångar hittade!": %}
+                <table>
                     {% for dep in stop[1]: %}
                         <tr>
-                            <td style="background-color: {{ dep.get("fgColor") }};
-                                    color: {{ dep.get("bgColor") }};
-                                    text-align: center;
-                                    padding: 5px;">{{ dep.get("sname") }}</td>
+                            <td id="line" style="background-color: {{ dep.get("fgColor") }}; color: {{ dep.get("bgColor") }};">
+                                {{ dep.get("sname") }}
+                            </td>
                             <td class="destination">{{ dep.get("direction") }}</td>
-                            <td>{{ dep.get("departures")[0] }}</td>
-                            <td>{{ dep.get("departures")[1] }}</td>
+                            <td id="dep">{{ dep.get("departures")[0] }}</td>
+                            <td id="dep">{{ dep.get("departures")[1] }}</td>
                         </tr>
                     {% endfor %}
-                {% endif %}
-            </table>
+                </table>    
+            {% endif %}
         </div>
     {% endfor %}
     <script src="static/clock.js"></script>
