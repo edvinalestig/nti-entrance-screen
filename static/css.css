@@ -2,7 +2,6 @@ body {
     background-color: rgb(175, 26, 180);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: 1fr, repeat(2, 5fr);
     font-family: sans-serif;
 }
 
@@ -33,6 +32,11 @@ table {
 #ChalmersTvärgata, #Chalmersplatsen {
     grid-column: 3/4;
     grid-row: span 1;
+}
+
+#skolmaten {
+    grid-column: 4/5;
+    grid-row: 2/4;
 }
 
 .destination {
@@ -70,4 +74,5 @@ tr {
 
 #dep {
     width: 50px;
+    text-align: center;
 }
