@@ -37,6 +37,15 @@
         <h1>Skolmaten</h1>
     </div>
 
+    <div id="disruptions">
+        {% if disruptions != None: %}
+            <h2>{{disruptions[0]}}</h2>
+            <h4>{{disruptions[1]}}</h4>
+        {% else: %}
+            <h1>Inga trafikstörningar!</h1>
+        {% endif %}
+    </div>
+
     <script src="static/clock.js"></script>
 </body>
 </html>
