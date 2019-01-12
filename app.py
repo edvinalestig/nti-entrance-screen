@@ -7,10 +7,10 @@ import vasttrafik
 
 app = Flask(__name__)
 
-# Update every 10 minutes
+# Update every 5 minutes
 # Return list of tuples
 def get_disruptions():
-    if situation["updated"] < datetime.now() - timedelta(minutes=10):
+    if situation["updated"] < datetime.now() - timedelta(minutes=5):
         situation["updated"] = datetime.now()
         situation["situations"] = get_trafficsituation()
     if len(situation["situations"]) > 0:
@@ -174,7 +174,7 @@ situation = {
 
 # ------- ROUTES --------
 
-@app.route("/")
+@app.route("/old")
 def index():
     cdep = format_departures(get_departures(chalmers_id))
     ctgdep = format_departures(get_departures(chalmers_tg_id))
@@ -185,7 +185,7 @@ def index():
 
     return render_template("template.jinja", stops=stops, disruptions=disruptions)
 
-@app.route("/norefresh")
+@app.route("/")
 def norefresh():
     with open("index.html") as f:
         site = f.read()

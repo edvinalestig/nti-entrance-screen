@@ -1,10 +1,13 @@
 const clockElement = document.getElementById("clock");
-let data;
 
 function updateClock() {
     clockElement.innerHTML = new Date().toTimeString().split(" ")[0];
     setTimeout(updateClock, 1000);
 }
+
+// Workaround for ä not working in the html
+const tvar = document.getElementById("tvar");
+tvar.innerHTML = "Chalmers Tvärgata";
 
 updateClock();
 getJson();
@@ -17,8 +20,7 @@ function getJson() {
 }
 
 function updateScreen() {
-    data = JSON.parse(this.responseText);
-    console.log(data);
+    const data = JSON.parse(this.responseText);
     // Clear the departure tables
     const tables = document.getElementsByClassName("table");
     for (table of tables) {
@@ -32,25 +34,28 @@ function updateScreen() {
         disruptiondiv.removeChild(disruptiondiv.firstChild);
     }
     
-    printDisruption(data);
+    printDisruption(data.disruptions);
     printDepartures("chalmers", data.chalmers);
     printDepartures("chalmerstg", data.chalmerstg);
     printDepartures("chalmersplatsen", data.chalmersplatsen);
     printDepartures("kapellplatsen", data.kapellplatsen);
 
+    // Update in 15 seconds
     setTimeout(getJson, 15000);
 }
 
 function printDisruption(data) {
     const disdiv = document.getElementById("disruptions");
-    if (data.disruptions) {
+    if (data) {
+        // There is a disruption
         const h2 = document.createElement("h2");
-        h2.innerHTML = data.disruptions[0];
+        h2.innerHTML = data[0]; // Title
         const h4 = document.createElement("h4");
-        h4.innerHTML = data.disruptions[1]
+        h4.innerHTML = data[1] // Description
         disdiv.appendChild(h2);
         disdiv.appendChild(h4);
     } else {
+        // There is not a disruption
         const h1 = document.createElement("h1");
         h1.innerHTML = "Inga trafikstörningar!";
         disdiv.appendChild(h1);
@@ -60,10 +65,13 @@ function printDisruption(data) {
 function printDepartures(name, departures) {
     const table = document.getElementById(name + "table");
     if (typeof departures == "string") {
+        // No departures found
         const row = document.createElement("tr");
         table.appendChild(row);
         row.innerHTML = departures;
+        row.style = "text-align: center;"
     } else {
+        // Go through the departures and make a row for each
         for (dep of departures) {
             const row = document.createElement("tr");
             table.appendChild(row);

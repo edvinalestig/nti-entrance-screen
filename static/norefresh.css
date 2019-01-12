@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(175, 26, 180);
+    background-color: #8A2BE2;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     font-family: sans-serif;
@@ -44,7 +44,7 @@ table {
 #disruptions {
     grid-column: 1/5;
     grid-row: 4/5;
-    background-color: blue;
+    background-color: rgba(20, 20, 20, 127);
     margin-top: 20px;
 }
 
