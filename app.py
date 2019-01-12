@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 from time import strftime
 from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template
@@ -183,3 +184,27 @@ def index():
     disruptions = get_disruptions()
 
     return render_template("template.jinja", stops=stops, disruptions=disruptions)
+
+@app.route("/norefresh")
+def norefresh():
+    with open("index.html") as f:
+        site = f.read()
+    return site
+
+@app.route("/getinfo")
+def getinfo():
+    cdep = format_departures(get_departures(chalmers_id))
+    ctgdep = format_departures(get_departures(chalmers_tg_id))
+    cpdep = format_departures(get_departures(chalmersplatsen_id))
+    kdep = format_departures(get_departures(kapellplatsen_id))
+    disruptions = get_disruptions()
+
+    d = {
+        "disruptions": disruptions,
+        "chalmers": cdep,
+        "chalmerstg": ctgdep,
+        "chalmersplatsen": cpdep,
+        "kapellplatsen": kdep
+    }
+
+    return json.dumps(d)
