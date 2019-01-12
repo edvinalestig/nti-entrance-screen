@@ -1,18 +1,51 @@
 # coding: utf-8
 from time import strftime
+from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template
 import vasttrafik
 
 app = Flask(__name__)
 
-with open("creds.txt") as f:
-    key, secret = f.readlines()
 
-vt = vasttrafik.Reseplaneraren(key.strip(), secret.strip(), 1)
-chalmers_id = 9021014001960000
-chalmers_tg_id = 9021014001970000
-chalmersplatsen_id = 9021014001961000
-kapellplatsen_id = 9021014003760000
+
+# Update every 10 minutes
+# Return list of tuples
+def get_disruptions():
+    if situation["updated"] < datetime.now() - timedelta(minutes=10):
+        situation["updated"] = datetime.now()
+        situation["situations"] = get_trafficsituation()
+    if len(situation["situations"]) > 0:
+        situation["previous_shown"] = (situation["previous_shown"] + 1) % len(situation["situations"])
+        return situation["situations"][ situation["previous_shown"]]
+    else:
+        return None
+
+
+def get_trafficsituation():
+    print("Updating disruptions")
+    arr = []
+    traffic = ts.trafficsituations()
+    for situation in traffic:
+        if situation.get("severity") != "severe":
+            continue
+        for stop in situation.get("affectedStopPoints"):
+            name = stop.get("name")
+            if name == "Chalmers" or name == "Kapellplatsen" or name == "Chalmers Tvärgata" or name == "Chalmersplatsen": # Vasaplatsen
+                if not "nattetid" in situation.get("description").lower():
+                    arr.append(situation)
+
+    outarr = []
+    for situation in arr:
+        timeformat = "%Y-%m-%dT%H%M%S%z" # Format from västtrafik
+        time = situation.get("startTime").replace(":", "")
+        time = datetime.strptime(time, timeformat)
+        now = datetime.now(timezone.utc)
+        if time <= now:
+            relevant = (situation.get("title"), situation.get("description"))
+            if relevant not in outarr:
+                outarr.append(relevant)
+
+    return outarr
 
 
 def get_departures(stop):
@@ -103,6 +136,24 @@ def calculate_minutes(departure):
     else:
         return f'Ca {countdown}'
 
+# -------- INIT  --------
+with open("creds.txt") as f:
+    key, secret = f.readlines()
+
+auth = vasttrafik.Auth(key.strip(), secret.strip(), 1)
+vt = vasttrafik.Reseplaneraren(auth)
+ts = vasttrafik.TrafficSituations(auth)
+
+chalmers_id = 9021014001960000
+chalmers_tg_id = 9021014001970000
+chalmersplatsen_id = 9021014001961000
+kapellplatsen_id = 9021014003760000
+
+situation = {
+    "updated": datetime.now(),
+    "previous_shown": 0,
+    "situations": get_trafficsituation()
+}
 
 # ------- ROUTES --------
 
@@ -113,5 +164,6 @@ def index():
     cpdep = format_departures(get_departures(chalmersplatsen_id))
     kdep = format_departures(get_departures(kapellplatsen_id))
     stops = (("Chalmers", cdep), ("Kapellplatsen", kdep), ("Chalmers Tvärgata", ctgdep), ("Chalmersplatsen", cpdep))
+    disruptions = get_disruptions()
 
-    return render_template("template.jinja", stops=stops)
+    return render_template("template.jinja", stops=stops, disruptions=disruptions)

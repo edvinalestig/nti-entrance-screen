@@ -15,7 +15,6 @@ header {
 div {
     margin: 15px;
     padding: 5px;
-    height: 100%;
     background-color: rgba(20, 20, 20, 127);
     color: white;
 }
@@ -26,24 +25,34 @@ table {
 
 #Chalmers, #Kapellplatsen {
     grid-column: span 1;
-    grid-row: span 2;
+    grid-row: 2/4;
+    height: 97%;
 }
 
 #ChalmersTvärgata, #Chalmersplatsen {
     grid-column: 3/4;
     grid-row: span 1;
+    height: 92%;
 }
 
 #skolmaten {
     grid-column: 4/5;
     grid-row: 2/4;
+    height: 97%;
+}
+
+#disruptions {
+    grid-column: 1/5;
+    grid-row: 4/5;
+    background-color: blue;
+    margin-top: 20px;
 }
 
 .destination {
     padding-left: 10px;
 }
 
-h1 {
+h1, h2, h4 {
     text-align: center;
 }
 
