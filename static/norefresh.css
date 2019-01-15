@@ -3,6 +3,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     font-family: sans-serif;
+    background-image: url("itg.jpg");
 }
 
 header {
@@ -15,7 +16,7 @@ header {
 div {
     margin: 15px;
     padding: 5px;
-    background-color: rgba(20, 20, 20, 127);
+    background-color: rgba(20, 20, 20, 0.7);
     color: white;
 }
 
@@ -44,7 +45,7 @@ table {
 #disruptions {
     grid-column: 1/5;
     grid-row: 4/5;
-    background-color: rgba(20, 20, 20, 127);
+    /* background-color: rgba(20, 20, 20, 127); */
     margin-top: 20px;
 }
 
