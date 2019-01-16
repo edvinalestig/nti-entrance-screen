@@ -16,6 +16,7 @@ header {
 div {
     margin: 15px;
     padding: 5px;
+    padding-bottom: 0px;
     background-color: rgba(20, 20, 20, 0.7);
     color: white;
 }

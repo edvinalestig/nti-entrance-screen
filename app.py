@@ -119,6 +119,9 @@ def sort_departures(arr):
 
 # Get minutes until departure
 def calculate_minutes(departure):
+    if departure.get("cancelled"):
+        return "Inställd"
+
     d_time = departure.get("rtTime")
     if d_time == None:
         realtime = False
