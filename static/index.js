@@ -79,28 +79,38 @@ function printDepartures(name, departures) {
         row.innerHTML = departures;
         row.style = "text-align: center;"
     } else {
-        // Go through the departures and make a row for each
-        for (dep of departures) {
-            const row = document.createElement("tr");
-            table.appendChild(row);
-            // Line number
-            const line = document.createElement("td");
-            line.id = "line";
-            line.style = "background-color: " + dep.fgColor + "; color: " + dep.bgColor + ";";
-            line.innerHTML = dep.sname;
-            row.appendChild(line);
-            // Destination
-            const dest = document.createElement("td");
-            dest.classList.add("destination");
-            dest.innerHTML = dep.direction;
-            row.appendChild(dest);
-            // Departures
-            for (time of dep.departures) {
-                const t = document.createElement("td");
-                t.id = "dep";
-                t.innerHTML = time;
-                row.appendChild(t);
+        
+        if (!departures.length) {
+            // Only one departure
+            createElements(departures, table);
+        } else {
+            // Go through the departures and make a row for each
+            for (dep of departures) {
+                createElements(dep, table);
             }
         }
+    }
+}
+
+function createElements(dep, table) {
+    const row = document.createElement("tr");
+    table.appendChild(row);
+    // Line number
+    const line = document.createElement("td");
+    line.id = "line";
+    line.style = "background-color: " + dep.fgColor + "; color: " + dep.bgColor + ";";
+    line.innerHTML = dep.sname;
+    row.appendChild(line);
+    // Destination
+    const dest = document.createElement("td");
+    dest.classList.add("destination");
+    dest.innerHTML = dep.direction;
+    row.appendChild(dest);
+    // Departures
+    for (time of dep.departures) {
+        const t = document.createElement("td");
+        t.id = "dep";
+        t.innerHTML = time;
+        row.appendChild(t);
     }
 }

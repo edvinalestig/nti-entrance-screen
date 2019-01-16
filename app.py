@@ -62,6 +62,16 @@ def get_departures(stop):
 def format_departures(departures):
     if departures == None:
         return "Inga avgångar hittade!"
+    if type(departures) == dict:
+        # Only one departure
+        print("hello")
+        return ({
+            "sname": departures.get("sname"),
+            "direction": departures.get("direction"),
+            "departures": [calculate_minutes(departures)],
+            "fgColor": departures.get("fgColor"),
+            "bgColor": departures.get("bgColor")
+        })
 
     # Information needed:
     # Line nr
@@ -166,6 +176,7 @@ ts = vasttrafik.TrafficSituations(auth)
 chalmers_id = 9021014001960000
 chalmers_tg_id = 9021014001970000
 chalmersplatsen_id = 9021014001961000
+# chalmersplatsen_id = 9021014019792000 # TEST, INTE DEN RIKTIGA (Lillevrå, Kungsbacka)
 kapellplatsen_id = 9021014003760000
 
 # Traffic disruptions
