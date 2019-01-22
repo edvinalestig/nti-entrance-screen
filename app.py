@@ -26,8 +26,9 @@ def get_trafficsituation():
     arr = []
     traffic = ts.trafficsituations()
     for situation in traffic:
-        # Skip disruptions which aren't classed as 'severe'
-        if situation.get("severity") != "severe":
+        # Skip disruptions which aren't classed as 'severe' or 'normal'
+        severity = situation.get("severity")
+        if not (severity == "severe" or severity == "normal"):
             continue
         for stop in situation.get("affectedStopPoints"):
             name = stop.get("name")
