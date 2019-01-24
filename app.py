@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 from time import strftime
 from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template
@@ -6,10 +7,10 @@ import vasttrafik
 
 app = Flask(__name__)
 
-# Update every 10 minutes
+# Update every 5 minutes
 # Return list of tuples
 def get_disruptions():
-    if situation["updated"] < datetime.now() - timedelta(minutes=10):
+    if situation["updated"] < datetime.now() - timedelta(minutes=5):
         situation["updated"] = datetime.now()
         situation["situations"] = get_trafficsituation()
     if len(situation["situations"]) > 0:
@@ -25,8 +26,9 @@ def get_trafficsituation():
     arr = []
     traffic = ts.trafficsituations()
     for situation in traffic:
-        # Skip disruptions which aren't classed as 'severe'
-        if situation.get("severity") != "severe":
+        # Skip disruptions which aren't classed as 'severe' or 'normal'
+        severity = situation.get("severity")
+        if not (severity == "severe" or severity == "normal"):
             continue
         for stop in situation.get("affectedStopPoints"):
             name = stop.get("name")
@@ -61,6 +63,16 @@ def get_departures(stop):
 def format_departures(departures):
     if departures == None:
         return "Inga avgångar hittade!"
+    if type(departures) == dict:
+        # Only one departure
+        print("hello")
+        return ({
+            "sname": departures.get("sname"),
+            "direction": departures.get("direction"),
+            "departures": [calculate_minutes(departures)],
+            "fgColor": departures.get("fgColor"),
+            "bgColor": departures.get("bgColor")
+        })
 
     # Information needed:
     # Line nr
@@ -118,6 +130,9 @@ def sort_departures(arr):
 
 # Get minutes until departure
 def calculate_minutes(departure):
+    if departure.get("cancelled"):
+        return "Inställd"
+
     d_time = departure.get("rtTime")
     if d_time == None:
         realtime = False
@@ -154,7 +169,7 @@ def calculate_minutes(departure):
 with open("creds.txt") as f:
     key, secret = f.readlines()
 
-auth = vasttrafik.Auth(key.strip(), secret.strip(), 1)
+auth = vasttrafik.Auth(key.strip(), secret.strip(), [40, 41, 42, 43])
 vt = vasttrafik.Reseplaneraren(auth)
 ts = vasttrafik.TrafficSituations(auth)
 
@@ -162,6 +177,7 @@ ts = vasttrafik.TrafficSituations(auth)
 chalmers_id = 9021014001960000
 chalmers_tg_id = 9021014001970000
 chalmersplatsen_id = 9021014001961000
+# chalmersplatsen_id = 9021014019792000 # TEST, INTE DEN RIKTIGA (Lillevrå, Kungsbacka)
 kapellplatsen_id = 9021014003760000
 
 # Traffic disruptions
@@ -173,7 +189,7 @@ situation = {
 
 # ------- ROUTES --------
 
-@app.route("/")
+@app.route("/old")
 def index():
     cdep = format_departures(get_departures(chalmers_id))
     ctgdep = format_departures(get_departures(chalmers_tg_id))
@@ -183,3 +199,27 @@ def index():
     disruptions = get_disruptions()
 
     return render_template("template.jinja", stops=stops, disruptions=disruptions)
+
+@app.route("/")
+def norefresh():
+    with open("index.html") as f:
+        site = f.read()
+    return site
+
+@app.route("/getinfo")
+def getinfo():
+    cdep = format_departures(get_departures(chalmers_id))
+    ctgdep = format_departures(get_departures(chalmers_tg_id))
+    cpdep = format_departures(get_departures(chalmersplatsen_id))
+    kdep = format_departures(get_departures(kapellplatsen_id))
+    disruptions = get_disruptions()
+
+    d = {
+        "disruptions": disruptions,
+        "chalmers": cdep,
+        "chalmerstg": ctgdep,
+        "chalmersplatsen": cpdep,
+        "kapellplatsen": kdep
+    }
+
+    return json.dumps(d)

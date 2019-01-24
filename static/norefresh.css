@@ -1,0 +1,101 @@
+body {
+    /* background-color: #8A2BE2; */
+    height: 1050px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    grid-gap: 15px;
+    font-family: sans-serif;
+    background-image: url("itg.jpg");
+}
+
+header {
+    grid-column: span 4;
+    grid-row: span 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+#clock {
+    margin: auto;
+    color: white;
+    font-size: 48px;
+    text-align: center;
+    /* grid-column: 1/3; */
+
+    text-shadow: 2px 2px 3px #444;
+}
+
+#clockdiv {
+    grid-column: 4/5;
+    grid-row: 2/3;
+    display: flex;
+}
+
+img {
+    grid-column: 2/4;
+    height: 100px;
+    margin: auto;
+}
+
+div {
+    padding: 5px;
+    background-color: rgba(20, 20, 20, 0.78);
+    color: white;
+}
+
+table {
+    width: 100%;
+}
+
+#chalmers, #kapellplatsen {
+    grid-column: span 1;
+    grid-row: 2/8;
+}
+
+#chalmerstg, #chalmersplatsen {
+    grid-column: 3/4;
+    grid-row: span 3;
+}
+
+#skolmaten {
+    grid-column: 4/5;
+    grid-row: 3/8;
+    text-align: center;
+}
+
+#disruptions {
+    grid-column: 1/5;
+    grid-row: 8/10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.destination {
+    padding-left: 10px;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+.departure > h1 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+tr {
+    height: 20px;
+}
+
+#line {
+    text-align: center;
+    padding: 5px;
+    width: 30px;
+}
+
+#dep {
+    width: 50px;
+    text-align: center;
+}
