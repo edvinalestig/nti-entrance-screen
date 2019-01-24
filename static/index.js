@@ -22,6 +22,16 @@ function getJson() {
         clearTimeout(updateTimer);
         updateTimer = setTimeout(getJson, 5000);
     });
+    req.addEventListener("error", e => {
+        console.error(e);
+        clearTimeout(updateTimer);
+        updateTimer = setTimeout(getJson, 5000);
+    });
+    // req.onerror(e => {
+    //     console.error(e);
+    //     clearTimeout(updateTimer);
+    //     updateTimer = setTimeout(getJson, 5000);
+    // })
     req.open("GET", "/getinfo");
     req.send();
 }
@@ -56,12 +66,12 @@ function printDisruption(data) {
     const disdiv = document.getElementById("disruptions");
     if (data) {
         // There is a disruption
-        const h2 = document.createElement("h2");
-        h2.innerHTML = data[0]; // Title
-        const h4 = document.createElement("h4");
-        h4.innerHTML = data[1] // Description
-        disdiv.appendChild(h2);
-        disdiv.appendChild(h4);
+        const h1 = document.createElement("h1");
+        h1.innerHTML = data[0]; // Title
+        const h3 = document.createElement("h3");
+        h3.innerHTML = data[1] // Description
+        disdiv.appendChild(h1);
+        disdiv.appendChild(h3);
     } else {
         // There is not a disruption
         const h1 = document.createElement("h1");
