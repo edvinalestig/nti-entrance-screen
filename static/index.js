@@ -9,6 +9,8 @@ function updateClock() {
 // Workaround for ä not working in the html
 const tvar = document.getElementById("tvar");
 tvar.innerHTML = "Chalmers Tvärgata";
+const mdag = document.getElementById("mdag");
+mdag.innerHTML = "Måndag";
 
 updateClock();
 getJson();
@@ -27,11 +29,6 @@ function getJson() {
         clearTimeout(updateTimer);
         updateTimer = setTimeout(getJson, 5000);
     });
-    // req.onerror(e => {
-    //     console.error(e);
-    //     clearTimeout(updateTimer);
-    //     updateTimer = setTimeout(getJson, 5000);
-    // })
     req.open("GET", "/getinfo");
     req.send();
 }

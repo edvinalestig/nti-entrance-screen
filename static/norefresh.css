@@ -16,11 +16,31 @@ header {
     grid-template-columns: repeat(4, 1fr);
 }
 
+#clock {
+    margin: auto;
+    color: white;
+    font-size: 48px;
+    text-align: center;
+    /* grid-column: 1/3; */
+
+    text-shadow: 2px 2px 3px #444;
+}
+
+#clockdiv {
+    grid-column: 4/5;
+    grid-row: 2/3;
+    display: flex;
+}
+
+img {
+    grid-column: 2/4;
+    height: 100px;
+    margin: auto;
+}
+
 div {
-    /* margin: 15px; */
     padding: 5px;
-    /* padding-bottom: 0px; */
-    background-color: rgba(20, 20, 20, 0.7);
+    background-color: rgba(20, 20, 20, 0.78);
     color: white;
 }
 
@@ -31,19 +51,17 @@ table {
 #chalmers, #kapellplatsen {
     grid-column: span 1;
     grid-row: 2/8;
-    /* height: 97%; */
 }
 
 #chalmerstg, #chalmersplatsen {
     grid-column: 3/4;
     grid-row: span 3;
-    /* height: 92%; */
 }
 
 #skolmaten {
     grid-column: 4/5;
-    grid-row: 2/8;
-    /* height: 97%; */
+    grid-row: 3/8;
+    text-align: center;
 }
 
 #disruptions {
@@ -52,8 +70,6 @@ table {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* position: relative */
-    /* margin-top: 20px; */
 }
 
 .destination {
@@ -67,19 +83,6 @@ h1, h2, h3, h4 {
 .departure > h1 {
     margin-top: 10px;
     margin-bottom: 10px;
-}
-
-img {
-    grid-column: 3/5;
-    height: 100px;
-    margin: auto;
-}
-
-#clock {
-    margin: auto;
-    color: white;
-    font-size: 48px;
-    grid-column: 1/3;
 }
 
 tr {
