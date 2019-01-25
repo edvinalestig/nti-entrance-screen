@@ -1,9 +1,11 @@
 # coding: utf-8
 import json
 import os
-from time import strftime
 from datetime import datetime, timezone, timedelta
+
 from flask import Flask, render_template
+import dateutil.tz as tz
+
 import vasttrafik
 # import creds
 
@@ -58,7 +60,11 @@ def get_trafficsituation():
 
 # Get 2 departures per line and destination within 1 hour
 def get_departures(stop):
-    departures = vt.departureBoard(id=stop, date=strftime("%Y%m%d"), time=strftime("%H:%M"), timeSpan=60, maxDeparturesPerLine=2)
+    time_now = datetime.now(tz.gettz("Europe/Stockholm"))
+    date = time_now.strftime("%Y%m%d")
+    time = time_now.strftime("%H:%M")
+
+    departures = vt.departureBoard(id=stop, date=date, time=time, timeSpan=60, maxDeparturesPerLine=2)
     return departures.get("DepartureBoard").get("Departure")
 
 
@@ -150,7 +156,8 @@ def calculate_minutes(departure):
     # Minutes since midnight
 
     # Now:
-    minutes_now = int(strftime("%M")) + int(strftime("%H")) * 60
+    time_now = datetime.now(tz.gettz("Europe/Stockholm"))
+    minutes_now = int(time_now.strftime("%M")) + int(time_now.strftime("%H")) * 60
 
     # Time left:
     countdown = minutes - minutes_now

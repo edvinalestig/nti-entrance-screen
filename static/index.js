@@ -7,10 +7,10 @@ function updateClock() {
 }
 
 // Workaround for ä not working in the html
-const tvar = document.getElementById("tvar");
-tvar.innerHTML = "Chalmers Tvärgata";
-const mdag = document.getElementById("mdag");
-mdag.innerHTML = "Måndag";
+// const tvar = document.getElementById("tvar");
+// tvar.innerHTML = "Chalmers Tvärgata";
+// const mdag = document.getElementById("mdag");
+// mdag.innerHTML = "Måndag";
 
 updateClock();
 getJson();
