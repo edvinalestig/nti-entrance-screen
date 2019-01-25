@@ -169,7 +169,7 @@ def calculate_minutes(departure):
 with open("creds.txt") as f:
     key, secret = f.readlines()
 
-auth = vasttrafik.Auth(key.strip(), secret.strip(), [40, 41, 42, 43])
+auth = vasttrafik.Auth(key.strip(), secret.strip(), [40, 41, 42, 43, 44])
 vt = vasttrafik.Reseplaneraren(auth)
 ts = vasttrafik.TrafficSituations(auth)
 

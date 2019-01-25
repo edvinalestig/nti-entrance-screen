@@ -18,22 +18,41 @@ getJson();
 function getJson() {
     let req = new XMLHttpRequest();
     req.timeout = 10000;
+    // req.onload = () => updateScreen(this.responseText);
+    req.ontimeout = () => {
+        console.error("XHR timeout");
+        clearTimeout(updateTimer);
+        updateTimer = setTimeout(getJson, 5000);
+    };
+    req.onerror = () => {
+        console.error("XHR error");
+        clearTimeout(updateTimer);
+        updateTimer = setTimeout(getJson, 15000);
+    }
+
     req.addEventListener("load", updateScreen);
-    req.addEventListener("timeout", e => {
-        console.error(e);
-        clearTimeout(updateTimer);
-        updateTimer = setTimeout(getJson, 5000);
-    });
-    req.addEventListener("error", e => {
-        console.error(e);
-        clearTimeout(updateTimer);
-        updateTimer = setTimeout(getJson, 5000);
-    });
+    // req.addEventListener("timeout", e => {
+    //     console.error(e);
+    //     clearTimeout(updateTimer);
+    //     updateTimer = setTimeout(getJson, 5000);
+    // });
+    // req.addEventListener("error", e => {
+    //     console.error(e);
+    //     clearTimeout(updateTimer);
+    //     updateTimer = setTimeout(getJson, 15000);
+    // });
     req.open("GET", "/getinfo");
     req.send();
 }
 
 function updateScreen() {
+    if (this.status != 200) {
+        console.error("Not 200 OK")
+        clearTimeout(updateTimer);
+        updateTimer = setTimeout(getJson, 15000);
+        return;
+    }
+
     const data = JSON.parse(this.responseText);
     // Clear the departure tables
     const tables = document.getElementsByClassName("table");

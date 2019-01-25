@@ -51,7 +51,7 @@ class Auth():
     def check_response(self, response, scope):
         if response.status_code == 401:
             self.__renew_token(scope)
-            token, scope = self.get_token()
+            token, scope_ = self.get_token()
 
             header = {"Authorization": token}
             response = requests.get(response.url, headers=header)
