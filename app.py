@@ -59,7 +59,6 @@ def get_trafficsituation():
 # Get 2 departures per line and destination within 1 hour
 def get_departures(stop):
     departures = vt.departureBoard(id=stop, date=strftime("%Y%m%d"), time=strftime("%H:%M"), timeSpan=60, maxDeparturesPerLine=2)
-    print(departures, "\n\n")
     return departures.get("DepartureBoard").get("Departure")
 
 
