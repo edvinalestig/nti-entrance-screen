@@ -5,6 +5,7 @@ from time import strftime
 from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template
 import vasttrafik
+# import creds
 
 app = Flask(__name__)
 
@@ -82,6 +83,7 @@ def format_departures(departures):
     # Colours
     # Sorted by line number
     arr = []
+    print(departures[0], departures[0].get("rtTime"), "\n")
 
     for dep in departures:
         if len(arr) == 0:
