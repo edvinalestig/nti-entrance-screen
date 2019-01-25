@@ -19,17 +19,33 @@ header {
 #clock {
     margin: auto;
     color: white;
-    font-size: 48px;
+    font-size: 64px;
     text-align: center;
     /* grid-column: 1/3; */
 
     text-shadow: 2px 2px 3px #444;
 }
 
+#date, #week {
+    margin: auto;
+    color: white;
+    text-align: center;
+}
+
 #clockdiv {
     grid-column: 4/5;
-    grid-row: 2/3;
+    grid-row: 2/4;
     display: flex;
+    flex-direction: column;
+}
+
+#datediv {
+    display: flex;
+    flex-direction: column;
+}
+
+#datediv > h2 {
+    margin-top: 7px;
 }
 
 img {
@@ -60,8 +76,16 @@ table {
 
 #skolmaten {
     grid-column: 4/5;
-    grid-row: 3/8;
+    grid-row: 4/8;
     text-align: center;
+}
+
+#skolmaten > h2 {
+    margin-bottom: 2px;
+}
+
+#skolmaten > p {
+    margin-top: 2px;
 }
 
 #disruptions {

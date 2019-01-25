@@ -1,9 +1,38 @@
 const clockElement = document.getElementById("clock");
 let updateTimer;
 
+Date.prototype.getWeek = function() {
+    let date = new Date(this.getTime());
+    date.setHours(0, 0, 0, 0);
+    // Thursday in current week decides the year.
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+    // January 4 is always in week 1.
+    const week1 = new Date(date.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
 function updateClock() {
     clockElement.innerHTML = new Date().toTimeString().split(" ")[0];
     setTimeout(updateClock, 500);
+}
+
+function updateDate() {
+    console.log("hello");
+    const time = new Date();
+    const week = time.getWeek();
+    const weekday = time.getDay();
+    const day = time.getDay();
+    const month = time.getMonth();
+    const year = time.getFullYear();
+
+    const days = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"];
+    const months = ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"];
+    
+    document.getElementById("date").innerHTML = days[weekday-1] + " " + day + " " + months[month];
+    document.getElementById("week").innerHTML = "Vecka " + week + " " + year;
+
+    setTimeout(updateDate, 3600000);
 }
 
 // Workaround for ä not working in the html
@@ -13,6 +42,7 @@ function updateClock() {
 // mdag.innerHTML = "Måndag";
 
 updateClock();
+updateDate();
 getJson();
 
 function getJson() {

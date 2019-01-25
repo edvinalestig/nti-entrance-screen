@@ -7,7 +7,7 @@ from flask import Flask, render_template
 import dateutil.tz as tz
 
 import vasttrafik
-# import creds
+import creds
 
 app = Flask(__name__)
 
