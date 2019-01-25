@@ -1,5 +1,6 @@
 # coding: utf-8
 import json
+import os
 from time import strftime
 from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template
@@ -166,8 +167,11 @@ def calculate_minutes(departure):
 
 
 # -------- INIT  --------
-with open("creds.txt") as f:
-    key, secret = f.readlines()
+# with open("creds.txt") as f:
+#     key, secret = f.readlines()
+
+key = os.environ["VT_KEY"]
+secret = os.environ["VT_SECRET"]
 
 auth = vasttrafik.Auth(key.strip(), secret.strip(), [40, 41, 42, 43, 44])
 vt = vasttrafik.Reseplaneraren(auth)
