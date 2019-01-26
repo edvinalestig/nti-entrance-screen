@@ -22,14 +22,14 @@ function updateDate() {
     const time = new Date();
     const week = time.getWeek();
     const weekday = time.getDay();
-    const day = time.getDay();
+    const day = time.getDate();
     const month = time.getMonth();
     const year = time.getFullYear();
 
-    const days = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"];
+    const days = ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"];
     const months = ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"];
     
-    document.getElementById("date").innerHTML = days[weekday-1] + " " + day + " " + months[month];
+    document.getElementById("date").innerHTML = days[weekday] + " " + day + " " + months[month];
     document.getElementById("week").innerHTML = "Vecka " + week + " " + year;
 
     setTimeout(updateDate, 3600000);
