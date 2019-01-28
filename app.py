@@ -182,7 +182,7 @@ def calculate_minutes(departure):
 key = os.environ["VT_KEY"]
 secret = os.environ["VT_SECRET"]
 
-auth = vasttrafik.Auth(key.strip(), secret.strip(), [40, 41, 42, 43, 44])
+auth = vasttrafik.Auth(key.strip(), secret.strip(), [40, 41, 42, 43, 44, 45, 46, 47, 48, 49])
 vt = vasttrafik.Reseplaneraren(auth)
 ts = vasttrafik.TrafficSituations(auth)
 
