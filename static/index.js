@@ -35,20 +35,15 @@ function updateDate() {
     setTimeout(updateDate, 3600000);
 }
 
-// Workaround for ä not working in the html
-// const tvar = document.getElementById("tvar");
-// tvar.innerHTML = "Chalmers Tvärgata";
-// const mdag = document.getElementById("mdag");
-// mdag.innerHTML = "Måndag";
-
 updateClock();
 updateDate();
 getJson();
+// Reload the page every 24 hrs to update
+setTimeout(document.location.reload, 86400);
 
 function getJson() {
     let req = new XMLHttpRequest();
     req.timeout = 10000;
-    // req.onload = () => updateScreen(this.responseText);
     req.ontimeout = () => {
         console.error("XHR timeout");
         clearTimeout(updateTimer);
@@ -61,16 +56,6 @@ function getJson() {
     }
 
     req.addEventListener("load", updateScreen);
-    // req.addEventListener("timeout", e => {
-    //     console.error(e);
-    //     clearTimeout(updateTimer);
-    //     updateTimer = setTimeout(getJson, 5000);
-    // });
-    // req.addEventListener("error", e => {
-    //     console.error(e);
-    //     clearTimeout(updateTimer);
-    //     updateTimer = setTimeout(getJson, 15000);
-    // });
     req.open("GET", "/getinfo");
     req.send();
 }
