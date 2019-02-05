@@ -7,7 +7,7 @@ from flask import Flask, render_template
 import dateutil.tz as tz
 
 import vasttrafik
-# import creds
+import creds
 
 app = Flask(__name__)
 
@@ -202,16 +202,16 @@ situation = {
 
 # ------- ROUTES --------
 
-@app.route("/old")
-def index():
-    cdep = format_departures(get_departures(chalmers_id))
-    ctgdep = format_departures(get_departures(chalmers_tg_id))
-    cpdep = format_departures(get_departures(chalmersplatsen_id))
-    kdep = format_departures(get_departures(kapellplatsen_id))
-    stops = (("Chalmers", cdep), ("Kapellplatsen", kdep), ("Chalmers Tvärgata", ctgdep), ("Chalmersplatsen", cpdep))
-    disruptions = get_disruptions()
+# @app.route("/old")
+# def index():
+#     cdep = format_departures(get_departures(chalmers_id))
+#     ctgdep = format_departures(get_departures(chalmers_tg_id))
+#     cpdep = format_departures(get_departures(chalmersplatsen_id))
+#     kdep = format_departures(get_departures(kapellplatsen_id))
+#     stops = (("Chalmers", cdep), ("Kapellplatsen", kdep), ("Chalmers Tvärgata", ctgdep), ("Chalmersplatsen", cpdep))
+#     disruptions = get_disruptions()
 
-    return render_template("template.jinja", stops=stops, disruptions=disruptions)
+#     return render_template("template.jinja", stops=stops, disruptions=disruptions)
 
 @app.route("/")
 def norefresh():
