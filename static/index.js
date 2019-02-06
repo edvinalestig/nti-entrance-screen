@@ -1,5 +1,8 @@
 const clockElement = document.getElementById("clock");
+const updatedTimes = document.getElementById("times");
+const updatedDisrupt = document.getElementById("disrupt")
 let updateTimer;
+let data;
 
 Date.prototype.getWeek = function() {
     let date = new Date(this.getTime());
@@ -14,7 +17,51 @@ Date.prototype.getWeek = function() {
 
 function updateClock() {
     clockElement.innerHTML = new Date().toTimeString().split(" ")[0];
+    if (data) {
+        let now = Date.now();
+        let times = Date.parse(data.updated);
+        let disrup = Date.parse(data.disruptions.updated);
+        updatedTimes.innerHTML = "Avgångstider uppdaterades " + formatTime(Math.floor((now - times) / 1000)) + "sedan";
+        updatedDisrupt.innerHTML = "Trafikstörningar uppdaterades " + formatTime(Math.floor((now - disrup) / 1000)) + "sedan";
+    }
     setTimeout(updateClock, 500);
+}
+
+function formatTime(time) {
+    // Time in seconds
+    const hours = Math.floor(time/3600);
+    const minutes = Math.floor((time%3600)/60);
+    const seconds = Math.floor((time%3600)%60);
+
+    let outstring = "";
+    if (hours > 0) {
+        outstring += hours;
+        if (hours == 1) {
+            outstring += " timme ";
+        } else {
+            outstring += " timmar ";
+        }
+    }
+    if (minutes > 0) {
+        outstring += minutes;
+        if (minutes == 1) {
+            outstring += " minut ";
+        } else {
+            outstring += " minuter ";
+        }
+    }
+    if (seconds > 0) {
+        outstring += seconds;
+        if (seconds == 1) {
+            outstring += " sekund ";
+        } else {
+            outstring += " sekunder ";
+        }
+    }
+    if (outstring == "") {
+        outstring += "0 sekunder ";
+    }
+    return outstring;
 }
 
 function updateDate() {
@@ -68,7 +115,7 @@ function updateScreen() {
         return;
     }
 
-    const data = JSON.parse(this.responseText);
+    data = JSON.parse(this.responseText);
     // Clear the departure tables
     const tables = document.getElementsByClassName("table");
     for (table of tables) {
@@ -81,6 +128,10 @@ function updateScreen() {
     while (disruptiondiv.firstChild) {
         disruptiondiv.removeChild(disruptiondiv.firstChild);
     }
+    // const disruptTime = document.getElementById("disrupt");
+    // const timesTime = document.getElementById("times");
+    // disruptTime.innerHTML = "Trafikstörningar uppdaterades " + data.disruptions.updated;
+    // timesTime.innerHTML = "Avgångstider uppdaterades " + data.updated;
     
     printDisruption(data.disruptions);
     printDepartures("chalmers", data.chalmers);
@@ -95,12 +146,12 @@ function updateScreen() {
 
 function printDisruption(data) {
     const disdiv = document.getElementById("disruptions");
-    if (data) {
+    if (data.situations) {
         // There is a disruption
         const h1 = document.createElement("h1");
-        h1.innerHTML = data[0]; // Title
+        h1.innerHTML = data.situations[0]; // Title
         const h3 = document.createElement("h3");
-        h3.innerHTML = data[1] // Description
+        h3.innerHTML = data.situations[1] // Description
         disdiv.appendChild(h1);
         disdiv.appendChild(h3);
     } else {

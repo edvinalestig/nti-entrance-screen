@@ -14,15 +14,22 @@ app = Flask(__name__)
 # Update every 5 minutes
 # Return list of tuples
 def get_disruptions():
-    if situation["updated"] < datetime.now() - timedelta(minutes=5):
-        situation["updated"] = datetime.now()
+    if situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=5):
+        situation["updated"] = datetime.now(tz.gettz("Europe/Stockholm"))
         situation["situations"] = get_trafficsituation()
+
+    out = {
+        "updated": situation["updated"].strftime("%Y-%m-%d %H:%M:%S%z"),
+        "situations": None
+    }
+
     if len(situation["situations"]) > 0:
         # Cycle thourough the disruptions if there are more than one
         situation["previous_shown"] = (situation["previous_shown"] + 1) % len(situation["situations"])
-        return situation["situations"][ situation["previous_shown"]]
-    else:
-        return None
+        out["situations"] = situation["situations"][situation["previous_shown"]]
+
+    return out
+
 
 # Get the lastest disruptions from västtrafik
 def get_trafficsituation():
@@ -89,7 +96,7 @@ def format_departures(departures):
     # Colours
     # Sorted by line number
     arr = []
-    print(departures[0], departures[0].get("rtTime"), "\n")
+    # print(departures[0], departures[0].get("rtTime"), "\n")
 
     for dep in departures:
         if len(arr) == 0:
@@ -182,6 +189,7 @@ def calculate_minutes(departure):
 key = os.environ["VT_KEY"]
 secret = os.environ["VT_SECRET"]
 
+print("Getting tokens")
 auth = vasttrafik.Auth(key.strip(), secret.strip(), [40, 41, 42, 43, 44, 45, 46, 47, 48, 49])
 vt = vasttrafik.Reseplaneraren(auth)
 ts = vasttrafik.TrafficSituations(auth)
@@ -195,7 +203,7 @@ kapellplatsen_id = 9021014003760000
 
 # Traffic disruptions
 situation = {
-    "updated": datetime.now(),
+    "updated": datetime.now(tz.gettz("Europe/Stockholm")),
     "previous_shown": 0,
     "situations": get_trafficsituation()
 }
@@ -232,7 +240,8 @@ def getinfo():
         "chalmers": cdep,
         "chalmerstg": ctgdep,
         "chalmersplatsen": cpdep,
-        "kapellplatsen": kdep
+        "kapellplatsen": kdep,
+        "updated": datetime.now(tz.gettz("Europe/Stockholm")).strftime("%Y-%m-%d %H:%M:%S%z")
     }
 
     return json.dumps(d)
