@@ -85,12 +85,32 @@ table {
     margin-top: 2px;
 }
 
-#disruptions {
+#info {
     grid-column: 1/5;
     grid-row: 8/10;
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+#disruptions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#disruptions h1 {
+    font-size: 36px;
+}
+
+#disruptionTitle {
+    margin-bottom: 10px;
+}
+
+#updated p {
+    text-align: center;
+    margin: 1px;
+    padding: 1px;
 }
 
 .destination {
