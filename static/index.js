@@ -79,14 +79,16 @@ function updateDate() {
     document.getElementById("date").innerHTML = days[weekday] + " " + day + " " + months[month];
     document.getElementById("week").innerHTML = "Vecka " + week + " " + year;
 
-    setTimeout(updateDate, 3600000);
+    setTimeout(updateDate, 900000);
 }
 
 updateClock();
 updateDate();
 getJson();
-// Reload the page every 24 hrs to update
-setTimeout(document.location.reload, 86400);
+// Reload the page every 24 hours
+setTimeout(() => {
+    document.location.reload();
+}, 86400000);
 
 function getJson() {
     let req = new XMLHttpRequest();
@@ -128,10 +130,6 @@ function updateScreen() {
     while (disruptiondiv.firstChild) {
         disruptiondiv.removeChild(disruptiondiv.firstChild);
     }
-    // const disruptTime = document.getElementById("disrupt");
-    // const timesTime = document.getElementById("times");
-    // disruptTime.innerHTML = "Trafikstörningar uppdaterades " + data.disruptions.updated;
-    // timesTime.innerHTML = "Avgångstider uppdaterades " + data.updated;
     
     printDisruption(data.disruptions);
     printDepartures("chalmers", data.chalmers);
@@ -150,10 +148,11 @@ function printDisruption(data) {
         // There is a disruption
         const h1 = document.createElement("h1");
         h1.innerHTML = data.situations[0]; // Title
-        const h3 = document.createElement("h3");
-        h3.innerHTML = data.situations[1] // Description
+        h1.id = "disruptionTitle";
+        const h2 = document.createElement("h2");
+        h2.innerHTML = data.situations[1] // Description
         disdiv.appendChild(h1);
-        disdiv.appendChild(h3);
+        disdiv.appendChild(h2);
     } else {
         // There is not a disruption
         const h1 = document.createElement("h1");

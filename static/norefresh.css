@@ -103,6 +103,10 @@ table {
     font-size: 36px;
 }
 
+#disruptionTitle {
+    margin-bottom: 10px;
+}
+
 #updated p {
     text-align: center;
     margin: 1px;
