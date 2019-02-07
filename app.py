@@ -7,7 +7,7 @@ from flask import Flask, render_template
 import dateutil.tz as tz
 
 import vasttrafik
-# import creds
+import creds
 
 app = Flask(__name__)
 
@@ -57,7 +57,7 @@ def get_trafficsituation():
         time = datetime.strptime(time, timeformat)
         now = datetime.now(timezone.utc)
         # Add it to the output array only if the disruption has started
-        if time <= now + timedelta(hours=10):
+        if time <= now:
             relevant = (situation.get("title"), situation.get("description"))
             # Skip duplicates
             if relevant not in outarr:
