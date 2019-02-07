@@ -21,8 +21,16 @@ function updateClock() {
         let now = Date.now();
         let times = Date.parse(data.updated);
         let disrup = Date.parse(data.disruptions.updated);
-        updatedTimes.innerHTML = "Avgångstider uppdaterades " + formatTime(Math.floor((now - times) / 1000)) + "sedan";
-        updatedDisrupt.innerHTML = "Trafikstörningar uppdaterades " + formatTime(Math.floor((now - disrup) / 1000)) + "sedan";
+        if (now - times < 30000) {
+            updatedTimes.innerHTML = "";
+        } else {
+            updatedTimes.innerHTML = "Avgångstider uppdaterades " + formatTime(Math.floor((now - times) / 1000)) + "sedan";
+        }
+        if (now - disrup < 240000) {
+            updatedDisrupt.innerHTML = "";
+        } else {
+            updatedDisrupt.innerHTML = "Trafikstörningar uppdaterades " + formatTime(Math.floor((now - disrup) / 1000)) + "sedan";
+        }
     }
     setTimeout(updateClock, 500);
 }
