@@ -225,9 +225,11 @@ function printMenu(menu) {
 
     // Set the html using the days as IDs
     for (let day of menu) {
-        const date = new Date(day.date * 1000);
-        const id = date.toDateString().split(" ")[0];
-        // Only displays the first item because of space issues
-        document.getElementById(id).innerHTML = day.items[0];
+        if (day.items) {
+            const date = new Date(day.date * 1000);
+            const id = date.toDateString().split(" ")[0];
+            // Only displays the first item because of space issues
+            document.getElementById(id).innerHTML = day.items[0];
+        }
     }
 }
