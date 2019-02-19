@@ -16,16 +16,22 @@ Date.prototype.getWeek = function() {
 }
 
 function updateClock() {
+    // Update the clock in the corner
     clockElement.innerHTML = new Date().toTimeString().split(" ")[0];
+
+    // Display text of when disuptions/times were last updated
+    // if not updated in a while
     if (data) {
         let now = Date.now();
         let times = Date.parse(data.updated);
         let disrup = Date.parse(data.disruptions.updated);
+        // 30 seconds
         if (now - times < 30000) {
             updatedTimes.innerHTML = "";
         } else {
             updatedTimes.innerHTML = "Avgångstider uppdaterades " + formatTime(Math.floor((now - times) / 1000)) + "sedan";
         }
+        // 4 minutes
         if (now - disrup < 240000) {
             updatedDisrupt.innerHTML = "";
         } else {
@@ -43,6 +49,7 @@ function formatTime(time) {
 
     let outstring = "";
     if (hours > 0) {
+        // Add hours if they exist
         outstring += hours;
         if (hours == 1) {
             outstring += " timme ";
@@ -51,6 +58,7 @@ function formatTime(time) {
         }
     }
     if (minutes > 0) {
+        // Add minutes if they exist
         outstring += minutes;
         if (minutes == 1) {
             outstring += " minut ";
@@ -59,6 +67,7 @@ function formatTime(time) {
         }
     }
     if (seconds > 0) {
+        // Add seconds if they exist
         outstring += seconds;
         if (seconds == 1) {
             outstring += " sekund ";
@@ -67,12 +76,14 @@ function formatTime(time) {
         }
     }
     if (outstring == "") {
+        // If nothing exists
         outstring += "0 sekunder ";
     }
     return outstring;
 }
 
 function updateDate() {
+    // Set the date and week in the corner
     console.log("hello");
     const time = new Date();
     const week = time.getWeek();
@@ -90,15 +101,11 @@ function updateDate() {
     setTimeout(updateDate, 900000);
 }
 
-updateClock();
-updateDate();
-getJson();
-// Reload the page every 24 hours
-setTimeout(() => {
-    document.location.reload();
-}, 86400000);
-
 function getJson() {
+    // Get new info from the server.
+    // If unsuccessful, try again until it works.
+    // This prevents the screen from never 
+    // updating again if something happens.
     let req = new XMLHttpRequest();
     req.timeout = 10000;
     req.ontimeout = () => {
@@ -124,8 +131,9 @@ function updateScreen() {
         updateTimer = setTimeout(getJson, 15000);
         return;
     }
-
+    // Get the response from the server and convert it to an object
     data = JSON.parse(this.responseText);
+
     // Clear the departure tables
     const tables = document.getElementsByClassName("table");
     for (table of tables) {
@@ -144,6 +152,7 @@ function updateScreen() {
     printDepartures("chalmerstg", data.chalmerstg);
     printDepartures("chalmersplatsen", data.chalmersplatsen);
     printDepartures("kapellplatsen", data.kapellplatsen);
+    printMenu(data.menu);
 
     // Update in 15 seconds
     clearTimeout(updateTimer);
@@ -170,6 +179,7 @@ function printDisruption(data) {
 }
 
 function printDepartures(name, departures) {
+    // Find the correct departure table
     const table = document.getElementById(name + "table");
     if (typeof departures == "string") {
         // No departures found
@@ -213,3 +223,32 @@ function createElements(dep, table) {
         row.appendChild(t);
     }
 }
+
+function printMenu(menu) {
+    // Set everything to no info in case there is no menu for a specific day.
+    document.getElementById("Mon").innerHTML = "Ingen information";
+    document.getElementById("Tue").innerHTML = "Ingen information";
+    document.getElementById("Wed").innerHTML = "Ingen information";
+    document.getElementById("Thu").innerHTML = "Ingen information";
+    document.getElementById("Fri").innerHTML = "Ingen information";
+
+    // Set the html using the days as IDs
+    for (let day of menu) {
+        if (day.items) {
+            const date = new Date(day.date * 1000);
+            const id = date.toDateString().split(" ")[0];
+            // Only displays the first item because of space issues
+            document.getElementById(id).innerHTML = day.items[0];
+        }
+    }
+}
+
+// --------------- 
+
+updateClock();
+updateDate();
+getJson();
+// Reload the page every 24 hours
+setTimeout(() => {
+    document.location.reload();
+}, 86400000);
