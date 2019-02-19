@@ -144,6 +144,7 @@ function updateScreen() {
     printDepartures("chalmerstg", data.chalmerstg);
     printDepartures("chalmersplatsen", data.chalmersplatsen);
     printDepartures("kapellplatsen", data.kapellplatsen);
+    printMenu(data.menu);
 
     // Update in 15 seconds
     clearTimeout(updateTimer);
@@ -211,5 +212,22 @@ function createElements(dep, table) {
         t.id = "dep";
         t.innerHTML = time;
         row.appendChild(t);
+    }
+}
+
+function printMenu(menu) {
+    // Set everything to no info in case there is no menu for a specific day.
+    document.getElementById("Mon").innerHTML = "Ingen information";
+    document.getElementById("Tue").innerHTML = "Ingen information";
+    document.getElementById("Wed").innerHTML = "Ingen information";
+    document.getElementById("Thu").innerHTML = "Ingen information";
+    document.getElementById("Fri").innerHTML = "Ingen information";
+
+    // Set the html using the days as IDs
+    for (let day of menu) {
+        const date = new Date(day.date * 1000);
+        const id = date.toDateString().split(" ")[0];
+        // Only displays the first item because of space issues
+        document.getElementById(id).innerHTML = day.items[0];
     }
 }

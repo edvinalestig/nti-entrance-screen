@@ -7,6 +7,7 @@ from flask import Flask, render_template
 import dateutil.tz as tz
 
 import vasttrafik
+import skolmaten
 import creds
 
 app = Flask(__name__)
@@ -234,6 +235,7 @@ def getinfo():
     cpdep = format_departures(get_departures(chalmersplatsen_id))
     kdep = format_departures(get_departures(kapellplatsen_id))
     disruptions = get_disruptions()
+    menu = skolmaten.get_menu()
 
     d = {
         "disruptions": disruptions,
@@ -241,6 +243,7 @@ def getinfo():
         "chalmerstg": ctgdep,
         "chalmersplatsen": cpdep,
         "kapellplatsen": kdep,
+        "menu": menu,
         "updated": datetime.now(tz.gettz("Europe/Stockholm")).strftime("%Y-%m-%d %H:%M:%S%z")
     }
 
