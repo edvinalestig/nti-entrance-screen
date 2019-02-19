@@ -3,12 +3,12 @@ import json
 import os
 from datetime import datetime, timezone, timedelta
 
-from flask import Flask, render_template
+from flask import Flask
 import dateutil.tz as tz
 
 import vasttrafik
 import skolmaten
-import creds
+# import creds
 
 app = Flask(__name__)
 
@@ -101,6 +101,8 @@ def format_departures(departures):
 
     for dep in departures:
         if len(arr) == 0:
+            # First departure has to be added manually
+            # The loop doesn't work if there isn't anything in arr
             arr.append({
                 "sname": dep.get("sname"),
                 "direction": dep.get("direction"),
@@ -150,6 +152,7 @@ def calculate_minutes(departure):
     if departure.get("cancelled"):
         return "Inställd"
 
+    # Check if real time info is available
     d_time = departure.get("rtTime")
     if d_time == None:
         realtime = False
@@ -184,9 +187,6 @@ def calculate_minutes(departure):
 
 
 # -------- INIT  --------
-# with open("creds.txt") as f:
-#     key, secret = f.readlines()
-
 key = os.environ["VT_KEY"]
 secret = os.environ["VT_SECRET"]
 
@@ -211,17 +211,6 @@ situation = {
 
 # ------- ROUTES --------
 
-# @app.route("/old")
-# def index():
-#     cdep = format_departures(get_departures(chalmers_id))
-#     ctgdep = format_departures(get_departures(chalmers_tg_id))
-#     cpdep = format_departures(get_departures(chalmersplatsen_id))
-#     kdep = format_departures(get_departures(kapellplatsen_id))
-#     stops = (("Chalmers", cdep), ("Kapellplatsen", kdep), ("Chalmers Tvärgata", ctgdep), ("Chalmersplatsen", cpdep))
-#     disruptions = get_disruptions()
-
-#     return render_template("template.jinja", stops=stops, disruptions=disruptions)
-
 @app.route("/")
 def norefresh():
     with open("index.html") as f:
@@ -230,6 +219,7 @@ def norefresh():
 
 @app.route("/getinfo")
 def getinfo():
+    # Get all the info and put it in a dict and send it off!
     cdep = format_departures(get_departures(chalmers_id))
     ctgdep = format_departures(get_departures(chalmers_tg_id))
     cpdep = format_departures(get_departures(chalmersplatsen_id))
