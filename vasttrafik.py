@@ -42,6 +42,7 @@ class Auth():
             raise requests.exceptions.HTTPError(f'{response.status_code} {response_dict.get("error_description")}')
 
         self.tokens[self.scopes.index(scope)] = ("Bearer " + response_dict.get("access_token"))
+        return "Bearer " + response_dict.get("access_token")
 
 
     def get_token(self, scope_=None):
@@ -57,8 +58,9 @@ class Auth():
 
     def check_response(self, response, scope):
         if response.status_code == 401:
-            self.__renew_token(scope)
-            token, scope_ = self.get_token(scope)
+            print("Renewing token", scope)
+            token = self.__renew_token(scope)
+            # token, scope_ = self.get_token(scope)
 
             header = {"Authorization": token}
             response = requests.get(response.url, headers=header)
