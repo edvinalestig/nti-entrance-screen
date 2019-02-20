@@ -1,6 +1,10 @@
 # coding: utf-8
+# import grequests
 import base64
 import requests
+# from requests_threads import AsyncSession
+# from requests_futures.sessions import FuturesSession
+
 
 class Auth():
     def __init__(self, key, secret, scopes):
@@ -40,18 +44,21 @@ class Auth():
         self.tokens[self.scopes.index(scope)] = ("Bearer " + response_dict.get("access_token"))
 
 
-    def get_token(self):
-        self.last_token = (self.last_token + 1) % len(self.scopes)
-        token = self.tokens[self.last_token]
-        scope = self.scopes[self.last_token]
+    def get_token(self, scope_=None):
+        if scope_:
+            return self.tokens[self.tokens.index(scope_)], scope_
+        else:
+            self.last_token = (self.last_token + 1) % len(self.scopes)
+            token = self.tokens[self.last_token]
+            scope = self.scopes[self.last_token]
 
-        return token, scope
+            return token, scope
 
 
     def check_response(self, response, scope):
         if response.status_code == 401:
             self.__renew_token(scope)
-            token, scope_ = self.get_token()
+            token, scope_ = self.get_token(scope)
 
             header = {"Authorization": token}
             response = requests.get(response.url, headers=header)
@@ -61,6 +68,64 @@ class Auth():
             raise requests.exceptions.HTTPError(f'{response.status_code} {response_dict.get("error_description")}')
 
         return response
+
+    # def check_responses(self, response_list, scope):
+    #     fine = True
+    #     for resp in response_list:
+    #         if resp.status_code != 200:
+    #             fine = False
+
+    #     if fine:
+    #         return response_list
+    #     else:
+    #         print("Renewing token " + str(scope))
+    #         self.__renew_token(scope)
+    #         token, scope_ = self.get_token(scope)
+    #         header = {"Authorization": token}
+
+    #         # Retry!
+    #         session = FuturesSession()
+    #         reqs = []
+    #         for resp in response_list:
+    #             url = reqs.url
+    #             resps.append(session.get(url, headers=header))
+
+    #         resps = []
+    #         for req in reqs:
+    #             resps.append(req.result())
+
+    #         if resps[0].status_code != 200:
+    #             raise requests.exceptions.HTTPError(f'{resps[0].status_code} {resps[0].reason}')
+
+    #         return resps
+
+
+    # def gcheck_responses(self, response_list, scope):
+    #     fine = True
+    #     for resp in response_list:
+    #         if resp.status_code != 200:
+    #             fine = False
+
+    #     if fine:
+    #         return response_list
+    #     else:
+    #         print("Renewing token " + str(scope))
+    #         self.__renew_token(scope)
+    #         token, scope_ = self.get_token(scope)
+    #         header = {"Authorization": token}
+
+    #         # Retry!
+    #         reqs = []
+    #         for resp in response_list:
+    #             url = reqs.url
+    #             resps.append(grequests.get(url, headers=header))
+
+    #         resps = grequests.map(reqs)
+
+    #         if resps[0].status_code != 200:
+    #             raise requests.exceptions.HTTPError(f'{resps[0].status_code} {resps[0].reason}')
+
+    #         return resps
 
 
 class Reseplaneraren():
@@ -186,6 +251,85 @@ class Reseplaneraren():
         response = self.auth.check_response(response, scope)
 
         return response.json()
+
+
+    # def getDeparturesAsync(self, stops, **kwargs):
+    #     session = AsyncSession()
+    #     return self.departureBoardsAsync(stops, kwargs, session)
+        
+
+    # async def departureBoardsAsync(self, stops, kwargs, session):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/departureBoard"
+    #     kwargs["format"] = "json"
+
+    #     reqs = []
+    #     for stop in stops:
+    #         params = kwargs
+    #         params["id"] = stop
+    #         reqs.append(await session.get(url, headers=header, params=params))
+    #     print(reqs)
+    #     return reqs
+        
+
+    # def asyncDepartureBoards(self, stops, **kwargs):
+        # token, scope = self.auth.get_token()
+        # header = {"Authorization": token}
+        # url = "https://api.vasttrafik.se/bin/rest.exe/v2/departureBoard"
+        # kwargs["format"] = "json"
+
+    #     session = FuturesSession()
+    #     reqs = []
+    #     for stop in stops:
+    #         params = kwargs
+    #         params["id"] = stop
+    #         future = session.get(url, headers=header, params=params)
+    #         reqs.append(future)
+
+    #     # print(reqs)
+    #     responses = []
+    #     for req in reqs:
+    #         r = req.result()
+    #         responses.append(r)
+
+    #     # print(responses)
+    #     resp = self.auth.check_responses(responses, scope)
+
+    #     output = []
+    #     for response in resp:
+    #         # print(response.url)
+    #         output.append(response.json())
+
+    #     return output
+
+
+    # def gasyncDepartureBoards(self, stops, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/departureBoard"
+    #     kwargs["format"] = "json"
+
+    #     reqs = []
+    #     for stop in stops:
+    #         params = kwargs
+    #         params["id"] = stop
+    #         print(params)
+    #         r = grequests.get(url, headers=header, params=params)
+    #         reqs.append(r)
+
+    #     # print(reqs)
+    #     responses = grequests.map(reqs)
+
+    #     # print(responses)
+    #     resp = self.auth.gcheck_responses(responses, scope)
+
+    #     output = []
+    #     for response in resp:
+    #         # print(response.url)
+    #         output.append(response.json())
+
+    #     return output
 
 
     def arrivalBoard(self, **kwargs):

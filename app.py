@@ -8,14 +8,14 @@ import dateutil.tz as tz
 
 import vasttrafik
 import skolmaten
-# import creds
+import creds
 
 app = Flask(__name__)
 
 # Update every 5 minutes
 # Return list of tuples
 def get_disruptions():
-    if situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=5):
+    if situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=3):
         situation["updated"] = datetime.now(tz.gettz("Europe/Stockholm"))
         situation["situations"] = get_trafficsituation()
 
@@ -74,6 +74,19 @@ def get_departures(stop):
 
     departures = vt.departureBoard(id=stop, date=date, time=time, timeSpan=60, maxDeparturesPerLine=2)
     return departures.get("DepartureBoard").get("Departure")
+
+
+# def get_async_departures(stops):
+#     time_now = datetime.now(tz.gettz("Europe/Stockholm"))
+#     date = time_now.strftime("%Y%m%d")
+#     time = time_now.strftime("%H:%M")
+
+#     departure_list = vt.getDeparturesAsync(stops, date=date, time=time, timeSpan=60, maxDeparturesPerLine=2)
+#     output = []
+#     for dep in departure_list:
+#         output.append(dep.get("DepartureBoard").get("Departure"))
+
+#     return output
 
 
 def format_departures(departures):
@@ -220,10 +233,16 @@ def norefresh():
 @app.route("/getinfo")
 def getinfo():
     # Get all the info and put it in a dict and send it off!
+    # deps = get_async_departures([chalmers_id, chalmers_tg_id, chalmersplatsen_id, kapellplatsen_id])
+
     cdep = format_departures(get_departures(chalmers_id))
     ctgdep = format_departures(get_departures(chalmers_tg_id))
     cpdep = format_departures(get_departures(chalmersplatsen_id))
     kdep = format_departures(get_departures(kapellplatsen_id))
+    # cdep = format_departures(deps[0])
+    # ctgdep = format_departures(deps[1])
+    # cpdep = format_departures(deps[2])
+    # kdep = format_departures(deps[3])
     disruptions = get_disruptions()
     menu = skolmaten.get_menu()
 
