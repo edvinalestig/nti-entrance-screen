@@ -1,7 +1,5 @@
 flask
 requests
 requests-futures
-requests-threads
-grequests
 gunicorn
 python-dateutil
