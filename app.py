@@ -8,7 +8,7 @@ import dateutil.tz as tz
 
 import vasttrafik
 import skolmaten
-import creds
+# import creds
 
 app = Flask(__name__)
 
