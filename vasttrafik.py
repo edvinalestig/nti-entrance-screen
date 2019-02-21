@@ -54,7 +54,7 @@ class Auth():
 
             return token, scope
 
-
+    # Check normal synchronous responses
     def check_response(self, response, scope):
         if response.status_code == 401:
             print("Renewing token", scope)
@@ -70,9 +70,11 @@ class Auth():
 
         return response
 
+    # Check asynchronous responses where there are multiple ones
     def check_responses(self, response_list, scope):
         fine = True
         for resp in response_list:
+            # Check for any errors
             if resp.status_code != 200:
                 fine = False
 
@@ -80,18 +82,19 @@ class Auth():
             return response_list
         else:
             print("Renewing token " + str(scope))
-            self.__renew_token(scope)
-            token, scope_ = self.get_token(scope)
+            token = self.__renew_token(scope)
             header = {"Authorization": token}
 
             # Retry!
             session = FuturesSession()
             reqs = []
             for resp in response_list:
+                # Send the new requests
                 url = reqs.url
                 resps.append(session.get(url, headers=header))
                 time.sleep(0.01)
 
+            # Get the results
             resps = []
             for req in reqs:
                 resps.append(req.result())
@@ -233,29 +236,28 @@ class Reseplaneraren():
         url = "https://api.vasttrafik.se/bin/rest.exe/v2/departureBoard"
         kwargs["format"] = "json"
 
+        # Start a session for the async requests
         session = FuturesSession()
         reqs = []
         for stop in stops:
+            # Send the requests
             params = kwargs
             params["id"] = stop
-            # print(params)
             future = session.get(url, headers=header, params=params)
             reqs.append(future)
             time.sleep(0.01) # Without this everything breaks
 
-        # print(reqs)
         responses = []
         for req in reqs:
+            # Get the results
             r = req.result()
-            # print(r.url)
             responses.append(r)
 
-        # print(responses)
+        # Check for errors
         resp = self.auth.check_responses(responses, scope)
 
         output = []
         for response in resp:
-            # print(response.url)
             output.append(response.json())
 
         return output

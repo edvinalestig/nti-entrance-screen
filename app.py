@@ -75,7 +75,7 @@ def get_departures(stop):
     departures = vt.departureBoard(id=stop, date=date, time=time, timeSpan=60, maxDeparturesPerLine=2)
     return departures.get("DepartureBoard").get("Departure")
 
-
+# Get all stops at the same time
 def get_async_departures(stops):
     time_now = datetime.now(tz.gettz("Europe/Stockholm"))
     date = time_now.strftime("%Y%m%d")
@@ -95,9 +95,10 @@ def format_departures(departures):
     if type(departures) == dict:
         # Only one departure
         print("hello")
+        direction = departures.get("direction").split(" via ")[0].split(", ")[0]
         return ({
             "sname": departures.get("sname"),
-            "direction": departures.get("direction"),
+            "direction": direction,
             "departures": [calculate_minutes(departures)],
             "fgColor": departures.get("fgColor"),
             "bgColor": departures.get("bgColor")
@@ -113,12 +114,13 @@ def format_departures(departures):
     # print(departures[0], departures[0].get("rtTime"), "\n")
 
     for dep in departures:
+        direction = dep.get("direction").split(" via ")[0].split(", ")[0]
         if len(arr) == 0:
             # First departure has to be added manually
             # The loop doesn't work if there isn't anything in arr
             arr.append({
                 "sname": dep.get("sname"),
-                "direction": dep.get("direction"),
+                "direction": direction,
                 "departures": [calculate_minutes(dep)],
                 "fgColor": dep.get("fgColor"),
                 "bgColor": dep.get("bgColor")
@@ -130,7 +132,7 @@ def format_departures(departures):
         while i < len(arr):
             # Check if one similar departure is in the list
             # Add the second departure time to the departure dict
-            if arr[i].get("sname") == dep.get("sname") and arr[i].get("direction") == dep.get("direction"):
+            if arr[i].get("sname") == dep.get("sname") and arr[i].get("direction") == direction:
                 added = True
                 if len(arr[i].get("departures")) >= 2:
                     break
@@ -145,7 +147,7 @@ def format_departures(departures):
         if not added:
             arr.append({
                 "sname": dep.get("sname"),
-                "direction": dep.get("direction"),
+                "direction": direction,
                 "departures": [calculate_minutes(dep)],
                 "fgColor": dep.get("fgColor"),
                 "bgColor": dep.get("bgColor")
