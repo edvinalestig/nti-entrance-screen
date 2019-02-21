@@ -8,14 +8,14 @@ import dateutil.tz as tz
 
 import vasttrafik
 import skolmaten
-# import creds
+import creds
 
 app = Flask(__name__)
 
 # Update every 5 minutes
 # Return list of tuples
 def get_disruptions():
-    if situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=5):
+    if situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=3):
         situation["updated"] = datetime.now(tz.gettz("Europe/Stockholm"))
         situation["situations"] = get_trafficsituation()
 
@@ -75,6 +75,19 @@ def get_departures(stop):
     departures = vt.departureBoard(id=stop, date=date, time=time, timeSpan=60, maxDeparturesPerLine=2)
     return departures.get("DepartureBoard").get("Departure")
 
+# Get all stops at the same time
+def get_async_departures(stops):
+    time_now = datetime.now(tz.gettz("Europe/Stockholm"))
+    date = time_now.strftime("%Y%m%d")
+    time = time_now.strftime("%H:%M")
+
+    departure_list = vt.asyncDepartureBoards(stops, date=date, time=time, timeSpan=60, maxDeparturesPerLine=2)
+    output = []
+    for dep in departure_list:
+        output.append(dep.get("DepartureBoard").get("Departure"))
+
+    return output
+
 
 def format_departures(departures):
     if departures == None:
@@ -82,9 +95,10 @@ def format_departures(departures):
     if type(departures) == dict:
         # Only one departure
         print("hello")
+        direction = departures.get("direction").split(" via ")[0].split(", ")[0]
         return ({
             "sname": departures.get("sname"),
-            "direction": departures.get("direction"),
+            "direction": direction,
             "departures": [calculate_minutes(departures)],
             "fgColor": departures.get("fgColor"),
             "bgColor": departures.get("bgColor")
@@ -100,12 +114,13 @@ def format_departures(departures):
     # print(departures[0], departures[0].get("rtTime"), "\n")
 
     for dep in departures:
+        direction = dep.get("direction").split(" via ")[0].split(", ")[0]
         if len(arr) == 0:
             # First departure has to be added manually
             # The loop doesn't work if there isn't anything in arr
             arr.append({
                 "sname": dep.get("sname"),
-                "direction": dep.get("direction"),
+                "direction": direction,
                 "departures": [calculate_minutes(dep)],
                 "fgColor": dep.get("fgColor"),
                 "bgColor": dep.get("bgColor")
@@ -117,7 +132,7 @@ def format_departures(departures):
         while i < len(arr):
             # Check if one similar departure is in the list
             # Add the second departure time to the departure dict
-            if arr[i].get("sname") == dep.get("sname") and arr[i].get("direction") == dep.get("direction"):
+            if arr[i].get("sname") == dep.get("sname") and arr[i].get("direction") == direction:
                 added = True
                 if len(arr[i].get("departures")) >= 2:
                     break
@@ -132,7 +147,7 @@ def format_departures(departures):
         if not added:
             arr.append({
                 "sname": dep.get("sname"),
-                "direction": dep.get("direction"),
+                "direction": direction,
                 "departures": [calculate_minutes(dep)],
                 "fgColor": dep.get("fgColor"),
                 "bgColor": dep.get("bgColor")
@@ -220,10 +235,16 @@ def norefresh():
 @app.route("/getinfo")
 def getinfo():
     # Get all the info and put it in a dict and send it off!
-    cdep = format_departures(get_departures(chalmers_id))
-    ctgdep = format_departures(get_departures(chalmers_tg_id))
-    cpdep = format_departures(get_departures(chalmersplatsen_id))
-    kdep = format_departures(get_departures(kapellplatsen_id))
+    deps = get_async_departures([chalmers_id, chalmers_tg_id, chalmersplatsen_id, kapellplatsen_id])
+
+    # cdep = format_departures(get_departures(chalmers_id))
+    # ctgdep = format_departures(get_departures(chalmers_tg_id))
+    # cpdep = format_departures(get_departures(chalmersplatsen_id))
+    # kdep = format_departures(get_departures(kapellplatsen_id))
+    cdep = format_departures(deps[0])
+    ctgdep = format_departures(deps[1])
+    cpdep = format_departures(deps[2])
+    kdep = format_departures(deps[3])
     disruptions = get_disruptions()
     menu = skolmaten.get_menu()
 

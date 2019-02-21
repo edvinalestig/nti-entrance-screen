@@ -1,4 +1,5 @@
 flask
 requests
+requests-futures
 gunicorn
 python-dateutil

@@ -1,6 +1,9 @@
 # coding: utf-8
 import base64
+import time
 import requests
+from requests_futures.sessions import FuturesSession
+
 
 class Auth():
     def __init__(self, key, secret, scopes):
@@ -38,20 +41,25 @@ class Auth():
             raise requests.exceptions.HTTPError(f'{response.status_code} {response_dict.get("error_description")}')
 
         self.tokens[self.scopes.index(scope)] = ("Bearer " + response_dict.get("access_token"))
+        return "Bearer " + response_dict.get("access_token")
 
 
-    def get_token(self):
-        self.last_token = (self.last_token + 1) % len(self.scopes)
-        token = self.tokens[self.last_token]
-        scope = self.scopes[self.last_token]
+    def get_token(self, scope_=None):
+        if scope_:
+            return self.tokens[self.tokens.index(scope_)], scope_
+        else:
+            self.last_token = (self.last_token + 1) % len(self.scopes)
+            token = self.tokens[self.last_token]
+            scope = self.scopes[self.last_token]
 
-        return token, scope
+            return token, scope
 
-
+    # Check normal synchronous responses
     def check_response(self, response, scope):
         if response.status_code == 401:
-            self.__renew_token(scope)
-            token, scope_ = self.get_token()
+            print("Renewing token", scope)
+            token = self.__renew_token(scope)
+            # token, scope_ = self.get_token(scope)
 
             header = {"Authorization": token}
             response = requests.get(response.url, headers=header)
@@ -61,6 +69,40 @@ class Auth():
             raise requests.exceptions.HTTPError(f'{response.status_code} {response_dict.get("error_description")}')
 
         return response
+
+    # Check asynchronous responses where there are multiple ones
+    def check_responses(self, response_list, scope):
+        fine = True
+        for resp in response_list:
+            # Check for any errors
+            if resp.status_code != 200:
+                fine = False
+
+        if fine:
+            return response_list
+        else:
+            print("Renewing token " + str(scope))
+            token = self.__renew_token(scope)
+            header = {"Authorization": token}
+
+            # Retry!
+            session = FuturesSession()
+            reqs = []
+            for resp in response_list:
+                # Send the new requests
+                url = reqs.url
+                resps.append(session.get(url, headers=header))
+                time.sleep(0.01)
+
+            # Get the results
+            resps = []
+            for req in reqs:
+                resps.append(req.result())
+
+            if resps[0].status_code != 200:
+                raise requests.exceptions.HTTPError(f'{resps[0].status_code} {resps[0].reason}')
+
+            return resps
 
 
 class Reseplaneraren():
@@ -186,6 +228,39 @@ class Reseplaneraren():
         response = self.auth.check_response(response, scope)
 
         return response.json()
+        
+
+    def asyncDepartureBoards(self, stops, **kwargs):
+        token, scope = self.auth.get_token()
+        header = {"Authorization": token}
+        url = "https://api.vasttrafik.se/bin/rest.exe/v2/departureBoard"
+        kwargs["format"] = "json"
+
+        # Start a session for the async requests
+        session = FuturesSession()
+        reqs = []
+        for stop in stops:
+            # Send the requests
+            params = kwargs
+            params["id"] = stop
+            future = session.get(url, headers=header, params=params)
+            reqs.append(future)
+            time.sleep(0.01) # Without this everything breaks
+
+        responses = []
+        for req in reqs:
+            # Get the results
+            r = req.result()
+            responses.append(r)
+
+        # Check for errors
+        resp = self.auth.check_responses(responses, scope)
+
+        output = []
+        for response in resp:
+            output.append(response.json())
+
+        return output
 
 
     def arrivalBoard(self, **kwargs):
