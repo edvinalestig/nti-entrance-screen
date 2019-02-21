@@ -1,6 +1,7 @@
 body {
     /* background-color: #8A2BE2; */
-    height: 1061px;
+    /* height: 1061px; */
+    height: 98vh;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(9, 1fr);
