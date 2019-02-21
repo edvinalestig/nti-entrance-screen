@@ -90,8 +90,8 @@ class Auth():
             reqs = []
             for resp in response_list:
                 # Send the new requests
-                url = reqs.url
-                resps.append(session.get(url, headers=header))
+                url = resp.url
+                reqs.append(session.get(url, headers=header))
                 time.sleep(0.01)
 
             # Get the results
