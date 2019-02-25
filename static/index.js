@@ -231,6 +231,11 @@ function printMenu(menu) {
     document.getElementById("Wed").innerHTML = "Ingen information";
     document.getElementById("Thu").innerHTML = "Ingen information";
     document.getElementById("Fri").innerHTML = "Ingen information";
+    document.getElementById("Monveg").innerHTML = "";
+    document.getElementById("Tueveg").innerHTML = "";
+    document.getElementById("Wedveg").innerHTML = "";
+    document.getElementById("Thuveg").innerHTML = "";
+    document.getElementById("Friveg").innerHTML = "";
 
     // Set the html using the days as IDs
     for (let day of menu) {
@@ -239,6 +244,7 @@ function printMenu(menu) {
             const id = date.toDateString().split(" ")[0];
             // Only displays the first item because of space issues
             document.getElementById(id).innerHTML = day.items[0];
+            document.getElementById(id + "veg").innerHTML = day.items[1];
         }
     }
 }
