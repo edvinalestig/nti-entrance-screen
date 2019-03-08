@@ -67,7 +67,7 @@ img {
 
 div {
     padding: 5px;
-    background-color: rgba(20, 20, 20, 0.78);
+    background-color: rgba(20, 20, 20, 0.88);
     color: white;
     border-radius: 10px;
 }
@@ -106,13 +106,13 @@ table {
 #skolmaten > h2 {
     margin-top: 2px;
     margin-bottom: 2px;
-    font-size: 2vh;
+    font-size: 1.8vh;
 }
 
 #skolmaten > p {
     margin-top: 0px;
     margin-bottom: 2px;
-    font-size: 1.75vh;
+    font-size: 1.6vh;
 }
 
 #info {
@@ -159,7 +159,7 @@ h1, h2, h3, h4 {
 
 p, tr {
     /* font-size: 19px; */
-    font-size: 1.82vh;
+    font-size: 1.7vh;
 }
 
 .departure > h1 {
@@ -169,7 +169,7 @@ p, tr {
 }
 
 tr {
-    height: 1.9vh;
+    height: 1.75vh;
 }
 
 #line {
