@@ -49,7 +49,7 @@ header {
 }
 
 #clockdiv h1, h2 {
-    font-family: 'Major Mono Display', monospace;
+    font-family: 'Roboto Mono', monospace;
     font-weight: 300;
 }
 
@@ -106,7 +106,7 @@ table {
     margin-top: 4px;
     margin-bottom: 13px;
     font-size: 3vh;
-    font-family: 'Major Mono Display', monospace;
+    font-family: 'Roboto Mono', monospace;
     font-weight: 300;
 }
 
@@ -114,7 +114,7 @@ table {
     margin-top: 2px;
     margin-bottom: 2px;
     font-size: 2.8vh;
-    font-family: 'Major Mono Display', monospace;
+    font-family: 'Roboto Mono', monospace;
     font-weight: 500;
 }
 
@@ -192,7 +192,7 @@ p, tr {
     margin-top: 7px;
     margin-bottom: 7px;
     font-size: 3vh;
-    font-family: 'Major Mono Display', monospace;
+    font-family: 'Roboto Mono', monospace;
     font-weight: 300;
 }
 
