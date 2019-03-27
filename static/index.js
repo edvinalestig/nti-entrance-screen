@@ -206,7 +206,7 @@ function createElements(dep, table) {
     table.appendChild(row);
     // Line number
     const line = document.createElement("td");
-    line.id = "line";
+    line.classList.add("line");
     line.style = "background-color: " + dep.fgColor + "; color: " + dep.bgColor + ";";
     line.innerHTML = dep.sname;
     row.appendChild(line);
