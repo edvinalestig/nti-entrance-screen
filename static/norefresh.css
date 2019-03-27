@@ -5,7 +5,7 @@ body {
     grid-template-rows: repeat(9, 1fr);
     grid-gap: 15px;
     font-family: sans-serif;
-    background-image: url("itg.jpg");
+    background-image: url("bg-image.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -48,6 +48,11 @@ header {
     align-content: center;
 }
 
+#clockdiv h1, h2 {
+    font-family: 'Major Mono Display', monospace;
+    font-weight: 300;
+}
+
 #datediv {
     margin: auto;
     display: flex;
@@ -67,7 +72,7 @@ img {
 
 div {
     padding: 5px;
-    background-color: rgba(20, 20, 20, 0.88);
+    background-color: rgba(20, 20, 20, 0.50);
     color: white;
     border-radius: 10px;
 }
@@ -93,26 +98,32 @@ table {
 
 #skolmaten {
     grid-column: 4/5;
-    grid-row: 3/8;
+    grid-row: 3/10;
     text-align: center;
 }
 
 #skolmaten h1 {
     margin-top: 4px;
-    margin-bottom: 3px;
-    font-size: 2.9vh;
+    margin-bottom: 13px;
+    font-size: 3vh;
+    font-family: 'Major Mono Display', monospace;
+    font-weight: 300;
 }
 
 #skolmaten h2 {
     margin-top: 2px;
     margin-bottom: 2px;
-    font-size: 1.8vh;
+    font-size: 2.8vh;
+    font-family: 'Major Mono Display', monospace;
+    font-weight: 500;
 }
 
 #skolmaten p {
     margin-top: 0px;
     margin-bottom: 2px;
-    font-size: 1.6vh;
+    font-size: 2vh;
+    font-family: 'Source Sans Pro', monospace;
+    font-weight: 300;
 }
 
 #daybox {
@@ -126,7 +137,7 @@ table {
 }
 
 #info {
-    grid-column: 1/5;
+    grid-column: 1/4;
     grid-row: 8/10;
     display: flex;
     flex-direction: column;
@@ -141,6 +152,8 @@ table {
 
 #disruptions h1 {
     font-size: 3.4vh;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
 }
 
 #disruptionTitle {
@@ -160,7 +173,10 @@ table {
 }
 
 .destination {
+    font-size: 18px;
     padding-left: 10px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 500;
 }
 
 h1, h2, h3, h4 {
@@ -176,16 +192,19 @@ p, tr {
     margin-top: 7px;
     margin-bottom: 7px;
     font-size: 3vh;
+    font-family: 'Major Mono Display', monospace;
+    font-weight: 300;
 }
 
 tr {
     height: 1.75vh;
 }
 
-#line {
+.line {
     text-align: center;
     padding: 5px;
     width: 30px;
+    font-size: 16px;
 }
 
 #dep {
