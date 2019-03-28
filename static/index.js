@@ -1,8 +1,11 @@
 const clockElement = document.getElementById("clock");
 const updatedTimes = document.getElementById("times");
-const updatedDisrupt = document.getElementById("disrupt")
+const updatedDisrupt = document.getElementById("disrupt");
+const nightInfo = document.getElementById("nightinfo");
 let updateTimer;
 let data;
+
+let testing = false;
 
 Date.prototype.getWeek = function() {
     let date = new Date(this.getTime());
@@ -38,6 +41,15 @@ function updateClock() {
             updatedDisrupt.innerHTML = "Trafikstörningar uppdaterades " + formatTime(Math.floor((now - disrup) / 1000)) + "sedan";
         }
     }
+
+    // Info about not updating at night
+    const time = new Date();
+    if (time.getHours() >= 20 || time.getHours() < 7) {
+        nightInfo.innerHTML = "Tider uppdateras inte mellan 20:00 och 07:00!";
+    } else {
+        nightInfo.innerHTML = "";
+    }
+
     setTimeout(updateClock, 500);
 }
 
@@ -102,6 +114,16 @@ function updateDate() {
 }
 
 function getJson() {
+    if (!testing) {
+        // Stop getting updates during the night
+        const time = new Date();
+        if (time.getHours() >= 20 || time.getHours() < 7) {
+            // Don't send requests between 20:00 and 07:00
+            setTimeout(getJson, 600000); // Try again in 10 minutes
+            return;
+        }
+    }
+
     // Get new info from the server.
     // If unsuccessful, try again until it works.
     // This prevents the screen from never 
