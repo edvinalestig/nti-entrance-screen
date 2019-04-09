@@ -168,6 +168,10 @@ function updateScreen() {
     while (disruptiondiv.firstChild) {
         disruptiondiv.removeChild(disruptiondiv.firstChild);
     }
+    const imgs = document.getElementsByClassName("alert");
+    for (let i of imgs) {
+        i.style = "visibility: hidden;";
+    }
     
     printDisruption(data.disruptions);
     printDepartures("chalmers", data.chalmers);
@@ -192,6 +196,11 @@ function printDisruption(data) {
         h2.innerHTML = data.situations[1] // Description
         disdiv.appendChild(h1);
         disdiv.appendChild(h2);
+
+        const imgs = document.getElementsByClassName("alert");
+        for (let i of imgs) {
+            i.style = "visibility: visible;";
+        }
     } else {
         // There is not a disruption
         const h1 = document.createElement("h1");
