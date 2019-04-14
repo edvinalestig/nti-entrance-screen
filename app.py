@@ -47,7 +47,7 @@ def get_trafficsituation():
             # Get only disruptions concerning the nearby stops
             if name == "Chalmers" or name == "Kapellplatsen" or name == "Chalmers Tvärgata" or name == "Chalmersplatsen":
                 # Skip night-only disruptions
-                if not "nattetid" in situation.get("description").lower():
+                if (not "nattetid" in situation.get("description").lower()) and (not "nattetid" in situation.get("title").lower()):
                     arr.append(situation)
 
     outarr = []
