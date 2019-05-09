@@ -228,3 +228,30 @@ tr {
     width: 50px;
     text-align: center;
 }
+
+#euval {
+    font-size: 76px;
+    align-content: center;
+    grid-column: 1/5;
+    /* height: 100px; */
+    height: 11vh;
+    margin: auto;
+    padding-top: 3vh;
+    color: white;
+
+    animation: chgcol 5s infinite alternate;
+}
+
+@keyframes chgcol {
+    0% {color:lime;}
+    25% {color: blue;}
+    50% {color:red;}
+    75% {color: white;}
+}
+
+@-webkit-keyframes chgcol {
+    0% {color:lime;}
+    25% {color: blue;}
+    50% {color:red;}
+    75% {color: white;}
+}
