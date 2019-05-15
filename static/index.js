@@ -4,6 +4,7 @@ const updatedDisrupt = document.getElementById("disrupt");
 const nightInfo = document.getElementById("nightinfo");
 let updateTimer;
 let data;
+let cleared = true;
 
 let testing = false;
 
@@ -39,6 +40,12 @@ function updateClock() {
             updatedDisrupt.innerHTML = "";
         } else {
             updatedDisrupt.innerHTML = "Trafikstörningar uppdaterades " + formatTime(Math.floor((now - disrup) / 1000)) + "sedan";
+        }
+
+        // 3 minutes
+        if (now - times > 180000 && !cleared) {
+            // Remove everything to now show incorrect data
+            clearTables();
         }
     }
 
@@ -96,7 +103,6 @@ function formatTime(time) {
 
 function updateDate() {
     // Set the date and week in the corner
-    console.log("hello");
     const time = new Date();
     const week = time.getWeek();
     const weekday = time.getDay();
@@ -146,16 +152,7 @@ function getJson() {
     req.send();
 }
 
-function updateScreen() {
-    if (this.status != 200) {
-        console.error("Not 200 OK")
-        clearTimeout(updateTimer);
-        updateTimer = setTimeout(getJson, 15000);
-        return;
-    }
-    // Get the response from the server and convert it to an object
-    data = JSON.parse(this.responseText);
-
+function clearTables() {
     // Clear the departure tables
     const tables = document.getElementsByClassName("table");
     for (table of tables) {
@@ -172,6 +169,22 @@ function updateScreen() {
     for (let i of imgs) {
         i.style = "visibility: hidden;";
     }
+
+    cleared = true;
+}
+
+function updateScreen() {
+    if (this.status != 200) {
+        console.error("Not 200 OK")
+        clearTimeout(updateTimer);
+        updateTimer = setTimeout(getJson, 15000);
+        return;
+    }
+    // Get the response from the server and convert it to an object
+    data = JSON.parse(this.responseText);
+
+    // Clear out the old stuff
+    clearTables();
     
     printDisruption(data.disruptions);
     printDepartures("chalmers", data.chalmers);
@@ -186,6 +199,7 @@ function updateScreen() {
 }
 
 function printDisruption(data) {
+    cleared = false;
     const disdiv = document.getElementById("disruptions");
     if (data.situations) {
         // There is a disruption
@@ -210,6 +224,7 @@ function printDisruption(data) {
 }
 
 function printDepartures(name, departures) {
+    cleared = false;
     // Find the correct departure table
     const table = document.getElementById(name + "table");
     if (typeof departures == "string") {
@@ -233,6 +248,7 @@ function printDepartures(name, departures) {
 }
 
 function createElements(dep, table) {
+    cleared = false;
     const row = document.createElement("tr");
     table.appendChild(row);
     // Line number
@@ -273,9 +289,10 @@ function printMenu(menu) {
         if (day.items) {
             const date = new Date(day.date * 1000);
             const id = date.toDateString().split(" ")[0];
-            // Only displays the first item because of space issues
             document.getElementById(id).innerHTML = day.items[0];
-            document.getElementById(id + "veg").innerHTML = day.items[1];
+            if (day.items[1]) {
+                document.getElementById(id + "veg").innerHTML = day.items[1];
+            }
         }
     }
 }
