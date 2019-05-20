@@ -23,9 +23,10 @@ class Auth():
         self.last_token = 0
 
 
-        for scope in scopes:
-            self.tokens.append(None)
-            self.__renew_token(scope)
+        # for scope in scopes:
+        #     self.tokens.append(None)
+        #     self.__renew_token(scope)
+        self.__async_renew_token(scopes)
 
 
     def __renew_token(self, scope):
@@ -42,6 +43,33 @@ class Auth():
 
         self.tokens[self.scopes.index(scope)] = ("Bearer " + response_dict.get("access_token"))
         return "Bearer " + response_dict.get("access_token")
+
+
+    def __async_renew_token(self, scopes):
+        # Should only be used when starting the server and having to renew all tokens
+        header = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic " + self.__credentials
+        }
+        url = "https://api.vasttrafik.se/token?grant_type=client_credentials&scope=device_"
+
+        # Start a session for the async requests
+        session = FuturesSession()
+        reqs = []
+        for scope in scopes:
+            # Send the requests
+            future = session.post(url + str(scope), headers=header)
+            reqs.append(future)
+            time.sleep(0.03) # Without this everything breaks
+
+        responses = []
+        for req in reqs:
+            # Get the results
+            r = req.result()
+            if r.status_code != 200:
+                raise requests.exceptions.HTTPError(f'{r.status_code} {r.get("error_description")}')
+
+            self.tokens.append("Bearer " + r.json().get("access_token"))
 
 
     def get_token(self, scope_=None):
@@ -245,7 +273,7 @@ class Reseplaneraren():
             params["id"] = stop
             future = session.get(url, headers=header, params=params)
             reqs.append(future)
-            time.sleep(0.01) # Without this everything breaks
+            time.sleep(0.02) # Without this everything breaks
 
         responses = []
         for req in reqs:
