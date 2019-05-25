@@ -20,7 +20,7 @@ The ```formatTime()``` function is used for displaying the warning messages ment
 
 ```createElements()``` creates a row with the line number, destination and minutes left for the departures. Everything using the easy to use ```document.createElement()``` function... All departures are already grouped by the server so the frontend doesn't have to do much other than displaying it.
 
-```printMeny()``` cleares the old menu and then fills in the new stuff. It finds the right day using the Date thingy.
+```printMenu()``` cleares the old menu and then fills in the new stuff. It finds the right day using the Date thingy.
 
 The page reloads every 24 hours to prevent having to refresh the page manually when something happens, like an update.
 
