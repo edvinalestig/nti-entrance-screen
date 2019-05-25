@@ -229,7 +229,7 @@ tr {
     text-align: center;
 }
 
-#euval {
+#banner {
     font-size: 76px;
     align-content: center;
     grid-column: 1/5;
@@ -239,6 +239,8 @@ tr {
     padding-top: 3vh;
     color: white;
 
+    /* "Draw attention" animation 
+    Can be commented out if not wanted */
     animation: chgcol 5s infinite alternate;
 }
 
