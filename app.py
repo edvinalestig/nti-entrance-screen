@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timezone, timedelta
 
 from flask import Flask
-import dateutil.tz as tz
+import dateutil.tz as tz # Used for timezone stuff
 
 import vasttrafik
 import skolmaten
@@ -15,6 +15,10 @@ app = Flask(__name__)
 # Update every 5 minutes
 # Return list of tuples
 def get_disruptions():
+    # Uses tz.gettz("Europe/Stockholm") to get Swedish time
+    # The server is based in Ireland and uses the wrong time without it
+
+    # Checks if 3 minutes have passed since the last update of disruptions
     if situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=3):
         situation["updated"] = datetime.now(tz.gettz("Europe/Stockholm"))
         situation["situations"] = get_trafficsituation()
@@ -206,7 +210,9 @@ key = os.environ["VT_KEY"]
 secret = os.environ["VT_SECRET"]
 
 print("Getting tokens")
+# Give the keys and the scopes to be used (40-49) to the Auth object
 auth = vasttrafik.Auth(key.strip(), secret.strip(), [40, 41, 42, 43, 44, 45, 46, 47, 48, 49])
+# Initialise the API request objects
 vt = vasttrafik.Reseplaneraren(auth)
 ts = vasttrafik.TrafficSituations(auth)
 

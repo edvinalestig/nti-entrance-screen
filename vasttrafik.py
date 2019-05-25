@@ -28,7 +28,7 @@ class Auth():
         #     self.__renew_token(scope)
         self.__async_renew_token(scopes)
 
-
+    # Renews one token
     def __renew_token(self, scope):
         header = {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -44,7 +44,7 @@ class Auth():
         self.tokens[self.scopes.index(scope)] = ("Bearer " + response_dict.get("access_token"))
         return "Bearer " + response_dict.get("access_token")
 
-
+    # Renews multiple tokens simultaneously
     def __async_renew_token(self, scopes):
         # Should only be used when starting the server and having to renew all tokens
         header = {
@@ -71,7 +71,8 @@ class Auth():
 
             self.tokens.append("Bearer " + r.json().get("access_token"))
 
-
+    # Method called when a token is needed for a request
+    # It cycles through them so Västtrafik does not complain about sending too many requests
     def get_token(self, scope_=None):
         if scope_:
             return self.tokens[self.tokens.index(scope_)], scope_
@@ -139,113 +140,115 @@ class Reseplaneraren():
             raise TypeError("Expected Auth object")
         self.auth = auth
 
+    # ----------- UNUSED METHODS BELOW -----------
 
-    def trip(self, **kwargs):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/trip"
-        kwargs["format"] = "json"
+    # def trip(self, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/trip"
+    #     kwargs["format"] = "json"
 
-        response = requests.get(url, headers=header, params=kwargs)
-        response = self.auth.check_response(response, scope)
+    #     response = requests.get(url, headers=header, params=kwargs)
+    #     response = self.auth.check_response(response, scope)
 
-        return response.json()
+    #     return response.json()
 
 
-    def location_nearbyaddress(self, **kwargs):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/location.nearbyaddress"
-        kwargs["format"] = "json"
+    # def location_nearbyaddress(self, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/location.nearbyaddress"
+    #     kwargs["format"] = "json"
  
-        response = requests.get(url, headers=header, params=kwargs)
-        response = self.auth.check_response(response, scope)
+    #     response = requests.get(url, headers=header, params=kwargs)
+    #     response = self.auth.check_response(response, scope)
 
-        return response.json()
-
-
-    def location_nearbystops(self, **kwargs):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/location.nearbystops"
-        kwargs["format"] = "json"
-
-        response = requests.get(url, headers=header, params=kwargs)
-        response = self.auth.check_response(response, scope)
-
-        return response.json()
+    #     return response.json()
 
 
-    def location_allstops(self, **kwargs):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/location.allstops"
-        kwargs["format"] = "json"
+    # def location_nearbystops(self, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/location.nearbystops"
+    #     kwargs["format"] = "json"
 
-        response = requests.get(url, headers=header, params=kwargs)
-        response = self.auth.check_response(response, scope)
+    #     response = requests.get(url, headers=header, params=kwargs)
+    #     response = self.auth.check_response(response, scope)
 
-        return response.json()
-
-
-    def location_name(self, **kwargs):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/location.name"
-        kwargs["format"] = "json"
-
-        response = requests.get(url, headers=header, params=kwargs)
-        response = self.auth.check_response(response, scope)
-
-        return response.json()
+    #     return response.json()
 
 
-    def systeminfo(self, **kwargs):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/systeminfo"
-        kwargs["format"] = "json"
+    # def location_allstops(self, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/location.allstops"
+    #     kwargs["format"] = "json"
 
-        response = requests.get(url, headers=header, params=kwargs)
-        response = self.auth.check_response(response, scope)
+    #     response = requests.get(url, headers=header, params=kwargs)
+    #     response = self.auth.check_response(response, scope)
 
-        return response.json()
-
-
-    def livemap(self, **kwargs):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/livemap"
-        kwargs["format"] = "json"
-
-        response = requests.get(url, headers=header, params=kwargs)
-        response = self.auth.check_response(response, scope)
-
-        return response.json()
+    #     return response.json()
 
 
-    def journeyDetail(self, ref):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/journeyDetail"
+    # def location_name(self, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/location.name"
+    #     kwargs["format"] = "json"
 
-        response = requests.get(url, headers=header, params={"ref":ref})
-        response = self.auth.check_response(response, scope)
+    #     response = requests.get(url, headers=header, params=kwargs)
+    #     response = self.auth.check_response(response, scope)
 
-        return response.json()
-
-
-    def geometry(self, ref):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/geometry"
-
-        response = requests.get(url, headers=header, params={"ref":ref})
-        response = self.auth.check_response(response, scope)
-
-        return response.json()
+    #     return response.json()
 
 
+    # def systeminfo(self, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/systeminfo"
+    #     kwargs["format"] = "json"
+
+    #     response = requests.get(url, headers=header, params=kwargs)
+    #     response = self.auth.check_response(response, scope)
+
+    #     return response.json()
+
+
+    # def livemap(self, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/livemap"
+    #     kwargs["format"] = "json"
+
+    #     response = requests.get(url, headers=header, params=kwargs)
+    #     response = self.auth.check_response(response, scope)
+
+    #     return response.json()
+
+
+    # def journeyDetail(self, ref):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/journeyDetail"
+
+    #     response = requests.get(url, headers=header, params={"ref":ref})
+    #     response = self.auth.check_response(response, scope)
+
+    #     return response.json()
+
+
+    # def geometry(self, ref):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/geometry"
+
+    #     response = requests.get(url, headers=header, params={"ref":ref})
+    #     response = self.auth.check_response(response, scope)
+
+    #     return response.json()
+
+
+    # Sends one request at a time
     def departureBoard(self, **kwargs):
         token, scope = self.auth.get_token()
         header = {"Authorization": token}
@@ -257,7 +260,7 @@ class Reseplaneraren():
 
         return response.json()
         
-
+    # Sends multiple requests simultaneously
     def asyncDepartureBoards(self, stops, **kwargs):
         token, scope = self.auth.get_token()
         header = {"Authorization": token}
@@ -291,25 +294,25 @@ class Reseplaneraren():
         return output
 
 
-    def arrivalBoard(self, **kwargs):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        url = "https://api.vasttrafik.se/bin/rest.exe/v2/arrivalBoard"
-        kwargs["format"] = "json"
+    # def arrivalBoard(self, **kwargs):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     url = "https://api.vasttrafik.se/bin/rest.exe/v2/arrivalBoard"
+    #     kwargs["format"] = "json"
 
-        response = requests.get(url, headers=header, params=kwargs)
-        response = self.auth.check_response(response, scope)
+    #     response = requests.get(url, headers=header, params=kwargs)
+    #     response = self.auth.check_response(response, scope)
 
-        return response.json()
+    #     return response.json()
 
 
-    def request(self, url):
-        token, scope = self.auth.get_token()
-        header = {"Authorization": token}
-        response = requests.get(url, headers=header)
-        response = self.auth.check_response(response, scope)
+    # def request(self, url):
+    #     token, scope = self.auth.get_token()
+    #     header = {"Authorization": token}
+    #     response = requests.get(url, headers=header)
+    #     response = self.auth.check_response(response, scope)
 
-        return response.json()
+    #     return response.json()
 
 
 class TrafficSituations():
@@ -328,35 +331,35 @@ class TrafficSituations():
 
         return response.json()
 
-    
+    # Get all the disruptions
     def trafficsituations(self):
         url = self.url
         return self.__get(url)
 
 
-    def stoppoint(self, gid):
-        url = self.url + f'/stoppoint/{gid}'
-        return self.__get(url)
+    # def stoppoint(self, gid):
+    #     url = self.url + f'/stoppoint/{gid}'
+    #     return self.__get(url)
 
 
-    def situation(self, gid):
-        url = self.url + f'/{gid}'
-        return self.__get(url)
+    # def situation(self, gid):
+    #     url = self.url + f'/{gid}'
+    #     return self.__get(url)
 
 
-    def line(self, gid):
-        url = self.url + f'/line/{gid}'
-        return self.__get(url)
+    # def line(self, gid):
+    #     url = self.url + f'/line/{gid}'
+    #     return self.__get(url)
 
 
-    def journey(self, gid):
-        url = self.url + f'/journey/{gid}'
-        return self.__get(url)
+    # def journey(self, gid):
+    #     url = self.url + f'/journey/{gid}'
+    #     return self.__get(url)
 
 
-    def stoparea(self, gid):
-        url = self.url + f'/stoparea/{gid}'
-        return self.__get(url)
+    # def stoparea(self, gid):
+    #     url = self.url + f'/stoparea/{gid}'
+    #     return self.__get(url)
 
 
 if __name__ == "__main__":
