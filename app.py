@@ -1,5 +1,6 @@
 # coding: utf-8
 import json
+import requests
 import os
 from datetime import datetime, timezone, timedelta
 
@@ -204,6 +205,14 @@ def calculate_minutes(departure):
     else:
         return f'Ca {countdown}'
 
+def get_temperature():
+    if (datetime.now - last_run) = timedelta(minutes=3)
+    api_key = "2e7dea4cdf03aed4961ca6190cb23bc4"
+    api_call = "https://api.openweathermap.org/data/2.5/weather?q=Göteborg&APPID=" + api_key
+    r = requests.get(api_call)
+    r_json = json.loads(str(r.json()).replace("'", '"'))
+    print("test")
+    return round((r_json["main"]["temp"]-272.15), 1)
 
 # -------- INIT  --------
 key = os.environ["VT_KEY"]
@@ -252,6 +261,7 @@ def getinfo():
     cpdep = format_departures(deps[2])
     kdep = format_departures(deps[3])
     disruptions = get_disruptions()
+    temperature = get_temperature()
     menu = skolmaten.get_menu()
 
     d = {
@@ -260,6 +270,7 @@ def getinfo():
         "chalmerstg": ctgdep,
         "chalmersplatsen": cpdep,
         "kapellplatsen": kdep,
+        "temperature": temperature,
         "menu": menu,
         "updated": datetime.now(tz.gettz("Europe/Stockholm")).strftime("%Y-%m-%d %H:%M:%S%z")
     }

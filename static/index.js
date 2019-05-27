@@ -191,6 +191,7 @@ function updateScreen() {
     printDepartures("chalmerstg", data.chalmerstg);
     printDepartures("chalmersplatsen", data.chalmersplatsen);
     printDepartures("kapellplatsen", data.kapellplatsen);
+    printTemperature(data.temperature)
     printMenu(data.menu);
 
     // Update in 15 seconds
@@ -269,6 +270,10 @@ function createElements(dep, table) {
         t.innerHTML = time;
         row.appendChild(t);
     }
+}
+
+function printTemperature(temp) {
+    document.getElementById("temperature").innerHTML = temp + "°C";
 }
 
 function printMenu(menu) {
