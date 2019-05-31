@@ -8,7 +8,6 @@ import dateutil.tz as tz # Used for timezone stuff
 
 import vasttrafik
 import skolmaten
-# import creds
 
 app = Flask(__name__)
 

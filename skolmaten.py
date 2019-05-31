@@ -9,6 +9,15 @@ from datetime import datetime, timedelta
 updated_menu = datetime.now() - timedelta(hours=48)
 menu_cached = []
 
+# When the keys are not already stored in environment variables
+# This is used when running locally (testing)
+if "SM_IDENT" not in list(os.environ.keys()) or "SM_VERSION" not in list(os.environ.keys()):
+    with open("creds.txt") as f:
+        key, secret, client_indent, client_version = f.readlines()
+    os.environ["SM_IDENT"] = client_indent
+    os.environ["SM_VERSION"] = client_version
+
+
 def get_menu():
     global updated_menu
     global menu_cached

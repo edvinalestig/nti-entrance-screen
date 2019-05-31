@@ -1,8 +1,17 @@
 # coding: utf-8
 import base64
+import os
 import time
 import requests
 from requests_futures.sessions import FuturesSession
+
+# When the keys are not already stored in environment variables
+# This is used when running locally (testing)
+if "VT_KEY" not in list(os.environ.keys()) or "VT_SECRET" not in list(os.environ.keys()):
+    with open("creds.txt") as f:
+        key, secret, client_indent, client_version = f.readlines()
+    os.environ["VT_KEY"] = key
+    os.environ["VT_SECRET"] = secret
 
 
 class Auth():
