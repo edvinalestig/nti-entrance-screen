@@ -273,7 +273,11 @@ function createElements(dep, table) {
 }
 
 function printTemperature(temp) {
-    document.getElementById("temperature").innerHTML = temp + "°C";
+    document.getElementById("temperature").innerHTML = 
+    "Nu: " + temp[0] + "°C"
+    + temp[2] + ": " + temp[1]
+    + temp[4] + ": " + temp[3]
+    + temp[6] + ": " + temp[5]
 }
 
 function printMenu(menu) {
