@@ -209,7 +209,7 @@ def get_temperature():
     if temp_situation["updated"] == 0 or temp_situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=10):
         print("Updating temperatures")
         # openweathermap_key = os.environ["OWM_KEY"]
-        openweathermap_key = "2e7dea4cdf03aed4961ca6190cb23bc4"
+        openweathermap_key = ""
         api_call = "https://api.openweathermap.org/data/2.5/weather?q=Göteborg&APPID=" + openweathermap_key
         r = requests.get(api_call)
         r_json = json.loads(str(r.json()).replace("'", '"'))
@@ -220,13 +220,13 @@ def get_temperature():
         hourly_r = requests.get(hourly_call)
         hourly_json = json.loads(str(hourly_r.json()).replace("'", '"'))
         temp0 = str(round((hourly_json["list"][0]["main"]["temp"]-272.15),1)) + "°C"
-        temp0time = datetime.fromtimestamp(hourly_json["list"][0]["dt"]).strftime('%H:%M')
+        temp0time = datetime.fromtimestamp(hourly_json["list"][0]["dt"], tz.gettz("Europe/Stockholm")).strftime('%H:%M')
         temp0wheather = getWeatherEmoji(hourly_json["list"][0]["weather"][0]["id"])
         temp1 = str(round((hourly_json["list"][1]["main"]["temp"]-272.15),1)) + "°C"
-        temp1time = datetime.fromtimestamp(hourly_json["list"][1]["dt"]).strftime('%H:%M')
+        temp1time = datetime.fromtimestamp(hourly_json["list"][1]["dt"], tz.gettz("Europe/Stockholm")).strftime('%H:%M')
         temp1wheather = getWeatherEmoji(hourly_json["list"][1]["weather"][0]["id"])
         temp2 = str(round((hourly_json["list"][2]["main"]["temp"]-272.15),1)) + "°C"
-        temp2time = datetime.fromtimestamp(hourly_json["list"][2]["dt"]).strftime('%H:%M')
+        temp2time = datetime.fromtimestamp(hourly_json["list"][2]["dt"], tz.gettz("Europe/Stockholm")).strftime('%H:%M')
         temp2wheather = getWeatherEmoji(hourly_json["list"][2]["weather"][0]["id"])
         
         temp_situation["updated"] = datetime.now(tz.gettz("Europe/Stockholm"))
