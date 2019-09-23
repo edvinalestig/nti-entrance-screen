@@ -8,5 +8,6 @@ To be able to run it you need credentials from both västtrafik and skolmaten. I
 <västtrafik secret>
 <skolmaten client ident>
 <skolmaten client version>
+<openweathermap key>
 ```
 https://entreskarm-nti.herokuapp.com/

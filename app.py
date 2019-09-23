@@ -208,12 +208,11 @@ def calculate_minutes(departure):
 def get_temperature():
     if temp_situation["updated"] == 0 or temp_situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=10):
         print("Updating temperatures")
-        # openweathermap_key = os.environ["OWM_KEY"]
-        openweathermap_key = ""
+        openweathermap_key = os.environ["OWM_KEY"].strip()
         api_call = "https://api.openweathermap.org/data/2.5/weather?q=Göteborg&APPID=" + openweathermap_key
         r = requests.get(api_call)
         r_json = json.loads(str(r.json()).replace("'", '"'))
-        temp_now = round((r_json["main"]["temp"]-272.15), 1)
+        temp_now = str(round((r_json["main"]["temp"]-272.15), 1)) + "°C"
         wheater_now = getWeatherEmoji(r_json["weather"][0]["id"])
 
         hourly_call = "https://api.openweathermap.org/data/2.5/forecast?q=Göteborg&APPID=" + openweathermap_key
@@ -245,13 +244,13 @@ def getWeatherEmoji(weatherID):
     # Openweathermap Weather codes and corressponding emojis
     thunderstorm = "\U0001F4A8"    # Code: 200's, 900, 901, 902, 905
     drizzle = "\U0001F4A7"         # Code: 300's
-    rain = "\U00002614"            # Code: 500's
-    snowflake = "\U00002744"       # Code: 600's snowflake
-    # snowman = "\U000026C4"         # Code: 600's snowman, 903, 906
+    rain = "\U00002614\U0000FE0F"            # Code: 500's
+    snowflake = "\U00002744\U0000FE0F"       # Code: 600's snowflake
+    # snowman = "\U000026C4"       # Code: 600's snowman, 903, 906
     atmosphere = "\U0001F301"      # Code: 700's foogy
-    clearSky = "\U00002600"        # Code: 800 clear sky
-    fewClouds = "\U000026C5"       # Code: 801 sun behind clouds
-    clouds = "\U00002601"          # Code: 802-803-804 clouds general
+    clearSky = "\U00002600\U0000FE0F"        # Code: 800 clear sky
+    fewClouds = "\U000026C5\U0000FE0F"       # Code: 801 sun behind clouds
+    clouds = "\U00002601\U0000FE0F"          # Code: 802-803-804 clouds general
     hot = "\U0001F525"             # Code: 904
     defaultEmoji = "\U0001F300"    # default emojis
     
@@ -269,7 +268,7 @@ def getWeatherEmoji(weatherID):
         return clearSky
     elif weatherIDstr == '801':
         return fewClouds
-    elif weatherIDstr == '802' or weatherIDstr == '803'  or weatherIDstr == '804':
+    elif weatherIDstr == '802' or weatherIDstr == '803' or weatherIDstr == '804':
         return clouds
     elif weatherIDstr == '904':
         return hot

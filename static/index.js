@@ -273,11 +273,14 @@ function createElements(dep, table) {
 }
 
 function printTemperature(temp) {
-    document.getElementById("temperature").innerHTML = 
-    "Nu: " + temp[0] + "°C"
-    + temp[2] + ": " + temp[1]
-    + temp[4] + ": " + temp[3]
-    + temp[6] + ": " + temp[5]
+    document.getElementById("temp").innerHTML = `Idag:<br>${temp[0]}`
+    document.getElementById("temp0").innerHTML = `${temp[3]}:<br>${temp[2]}`
+    document.getElementById("temp1").innerHTML = `${temp[6]}:<br>${temp[5]}`
+    document.getElementById("temp2").innerHTML = `${temp[9]}:<br>${temp[8]}`
+    document.getElementById("tempemoji").innerHTML = temp[1]
+    document.getElementById("temp0emoji").innerHTML = temp[4]
+    document.getElementById("temp1emoji").innerHTML = temp[7]
+    document.getElementById("temp2emoji").innerHTML = temp[10]
 }
 
 function printMenu(menu) {
