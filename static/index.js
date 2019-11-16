@@ -155,7 +155,7 @@ function getJson() {
 function clearTables() {
     // Clear the departure tables
     const tables = document.getElementsByClassName("table");
-    for (table of tables) {
+    for (let table of tables) {
         while (table.firstChild) {
             table.removeChild(table.firstChild);
         }
@@ -241,7 +241,7 @@ function printDepartures(name, departures) {
             createElements(departures, table);
         } else {
             // Go through the departures and make a row for each
-            for (dep of departures) {
+            for (let dep of departures) {
                 createElements(dep, table);
             }
         }
@@ -264,7 +264,7 @@ function createElements(dep, table) {
     dest.innerHTML = dep.direction;
     row.appendChild(dest);
     // Departures
-    for (time of dep.departures) {
+    for (let time of dep.departures) {
         const t = document.createElement("td");
         t.id = "dep";
         t.innerHTML = time;
