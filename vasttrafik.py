@@ -9,7 +9,7 @@ from requests_futures.sessions import FuturesSession
 # This is used when running locally (testing)
 if "VT_KEY" not in list(os.environ.keys()) or "VT_SECRET" not in list(os.environ.keys()):
     with open("creds.txt") as f:
-        key, secret, client_indent, client_version = f.readlines()
+        key, secret, client_indent, client_version, owm_key = f.readlines()
     os.environ["VT_KEY"] = key
     os.environ["VT_SECRET"] = secret
 
