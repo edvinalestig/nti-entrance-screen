@@ -9,7 +9,6 @@ import dateutil.tz as tz # Used for timezone stuff
 import vasttrafik
 import skolmaten
 import openweathermap
-# import creds
 
 app = Flask(__name__)
 
@@ -161,6 +160,14 @@ def format_departures(departures):
 
 
 def sort_departures(arr):
+    # Get the departures in the correct order in case the one behind is actually in front
+    for i, dep in enumerate(arr):
+        try:
+            arr[i]["departures"].sort()
+        except TypeError:
+            # One departure was a string and it doesn't like mixing strings and numbers
+            pass
+
     # Sort firstly by line number and secondly by destination
     sorted_by_destination = sorted(arr, key=lambda dep: dep["direction"])
     sorted_by_line = sorted(sorted_by_destination, key=lambda dep: int(dep['sname']))

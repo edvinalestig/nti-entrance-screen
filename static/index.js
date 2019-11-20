@@ -125,7 +125,8 @@ function getJson() {
         const time = new Date();
         if (time.getHours() >= 20 || time.getHours() < 7) {
             // Don't send requests between 20:00 and 07:00
-            setTimeout(getJson, 600000); // Try again in 10 minutes
+            clearTimeout(updateTimer);
+            updateTimer = setTimeout(getJson, 600000); // Try again in 10 minutes
             return;
         }
     }
