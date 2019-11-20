@@ -273,7 +273,7 @@ function createElements(dep, table) {
 }
 
 function printTemperature(temp) {
-    document.getElementById("temp").innerHTML = `Idag:<br>${temp[0]}`
+    document.getElementById("temp").innerHTML = `Nu:<br>${temp[0]}`
     document.getElementById("temp0").innerHTML = `${temp[3]}:<br>${temp[2]}`
     document.getElementById("temp1").innerHTML = `${temp[6]}:<br>${temp[5]}`
     document.getElementById("temp2").innerHTML = `${temp[9]}:<br>${temp[8]}`
