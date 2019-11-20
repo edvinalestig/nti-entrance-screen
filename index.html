@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sv">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Source+Sans+Pro" rel="stylesheet">
     <title>Johanneberg</title>
 </head>
+
 <body>
     <header>
         <img src="static/JohanneBerg-Vit.png" alt="NTI Johanneberg">
@@ -24,7 +26,7 @@
         <table id="kapellplatsentable" class="table"></table>
     </div>
     <div id="chalmerstg" class="departure">
-        <h1 id="tvar">Chalmers Tvärgata</h1>
+        <h1 id="tvar">Chalmers Tv&auml;rgata</h1>
         <table id="chalmerstgtable" class="table"></table>
     </div>
     <div id="chalmersplatsen" class="departure">
@@ -37,6 +39,17 @@
             <h1 id="date"></h1>
             <h2 id="week"></h2>
         </main>
+        <article id="temperature">
+            <div id="temp">Kan:<br>17&deg;C</div>
+            <div class="emoji" id="tempemoji">&#9728;</div>
+            <div id="temp0">Inte:<br>17&deg;C</div>
+            <div class="emoji" id="temp0emoji">&#9728;</div>
+            <div id="temp1">Uppd:<br>17&deg;C</div>
+            <div class="emoji" id="temp1emoji">&#9728;</div>
+            <div id="temp2">atera:<br>17&deg;C</div>
+            <div class="emoji" id="temp2emoji">&#9728;</div>
+        </article>
+        <!-- <h1 id="temperature"></h1> -->
         <h1 id="clock"></h1>
     </div>
 
@@ -44,7 +57,7 @@
         <h1>Veckans meny</h1>
         <article id="daybox">
             <article class="day">
-                <h2>Måndag</h2>
+                <h2>M&aring;ndag</h2>
                 <p id="Mon">Ingen information</p>
                 <p id="Monveg"></p>
             </article>
@@ -86,4 +99,5 @@
 
     <script src="static/index.js"></script>
 </body>
+
 </html>

@@ -156,7 +156,7 @@ function getJson() {
 function clearTables() {
     // Clear the departure tables
     const tables = document.getElementsByClassName("table");
-    for (table of tables) {
+    for (let table of tables) {
         while (table.firstChild) {
             table.removeChild(table.firstChild);
         }
@@ -192,6 +192,7 @@ function updateScreen() {
     printDepartures("chalmerstg", data.chalmerstg);
     printDepartures("chalmersplatsen", data.chalmersplatsen);
     printDepartures("kapellplatsen", data.kapellplatsen);
+    printTemperature(data.temperature)
     printMenu(data.menu);
 
     // Update in 15 seconds
@@ -241,7 +242,7 @@ function printDepartures(name, departures) {
             createElements(departures, table);
         } else {
             // Go through the departures and make a row for each
-            for (dep of departures) {
+            for (let dep of departures) {
                 createElements(dep, table);
             }
         }
@@ -264,12 +265,23 @@ function createElements(dep, table) {
     dest.innerHTML = dep.direction;
     row.appendChild(dest);
     // Departures
-    for (time of dep.departures) {
+    for (let time of dep.departures) {
         const t = document.createElement("td");
         t.id = "dep";
         t.innerHTML = time;
         row.appendChild(t);
     }
+}
+
+function printTemperature(temp) {
+    document.getElementById("temp").innerHTML = `Nu:<br>${temp[0]}`
+    document.getElementById("temp0").innerHTML = `${temp[3]}:<br>${temp[2]}`
+    document.getElementById("temp1").innerHTML = `${temp[6]}:<br>${temp[5]}`
+    document.getElementById("temp2").innerHTML = `${temp[9]}:<br>${temp[8]}`
+    document.getElementById("tempemoji").innerHTML = temp[1]
+    document.getElementById("temp0emoji").innerHTML = temp[4]
+    document.getElementById("temp1emoji").innerHTML = temp[7]
+    document.getElementById("temp2emoji").innerHTML = temp[10]
 }
 
 function printMenu(menu) {

@@ -8,6 +8,7 @@ import dateutil.tz as tz # Used for timezone stuff
 
 import vasttrafik
 import skolmaten
+import openweathermap
 
 app = Flask(__name__)
 
@@ -259,6 +260,7 @@ def getinfo():
     cpdep = format_departures(deps[2])
     kdep = format_departures(deps[3])
     disruptions = get_disruptions()
+    temperature = openweathermap.get_temperature()
     menu = skolmaten.get_menu()
 
     d = {
@@ -267,6 +269,7 @@ def getinfo():
         "chalmerstg": ctgdep,
         "chalmersplatsen": cpdep,
         "kapellplatsen": kdep,
+        "temperature": temperature,
         "menu": menu,
         "updated": datetime.now(tz.gettz("Europe/Stockholm")).strftime("%Y-%m-%d %H:%M:%S%z")
     }
