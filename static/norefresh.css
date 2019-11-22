@@ -116,6 +116,12 @@ div {
     padding: 0;
 }
 
+img.emoji {
+    height: 64px;
+    margin-left: -15px;
+    padding: 0;
+}
+
 table {
     width: 100%;
 }
