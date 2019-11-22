@@ -198,6 +198,8 @@ function updateScreen() {
     // Update in 15 seconds
     clearTimeout(updateTimer);
     updateTimer = setTimeout(getJson, 15000);
+    
+    twemoji.parse(document.getElementById("temperature"));
 }
 
 function printDisruption(data) {
