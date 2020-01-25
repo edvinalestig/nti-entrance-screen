@@ -16,7 +16,7 @@ app = Flask(__name__)
 # Return list of tuples
 def get_disruptions():
     # Uses tz.gettz("Europe/Stockholm") to get Swedish time
-    # The server is based in Ireland and uses the wrong time without it
+    # The server is (was?) based in Ireland and uses the wrong time without it
 
     # Checks if 3 minutes have passed since the last update of disruptions
     if situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=3):
@@ -29,7 +29,7 @@ def get_disruptions():
     }
 
     if len(situation["situations"]) > 0:
-        # Cycle thourough the disruptions if there are more than one
+        # Cycle through the disruptions if there are more than one
         situation["previous_shown"] = (situation["previous_shown"] + 1) % len(situation["situations"])
         out["situations"] = situation["situations"][situation["previous_shown"]]
 
@@ -53,6 +53,7 @@ def get_trafficsituation():
                 # Skip night-only disruptions
                 if (not "nattetid" in situation.get("description").lower()) and (not "nattetid" in situation.get("title").lower()):
                     arr.append(situation)
+                    break
 
     outarr = []
     for situation in arr:
@@ -69,15 +70,6 @@ def get_trafficsituation():
                 outarr.append(relevant)
 
     return outarr
-
-# Get 2 departures per line and destination within 1 hour
-def get_departures(stop):
-    time_now = datetime.now(tz.gettz("Europe/Stockholm"))
-    date = time_now.strftime("%Y%m%d")
-    time = time_now.strftime("%H:%M")
-
-    departures = vt.departureBoard(id=stop, date=date, time=time, timeSpan=60, maxDeparturesPerLine=2)
-    return departures.get("DepartureBoard").get("Departure")
 
 # Get all stops at the same time
 def get_async_departures(stops):
@@ -97,16 +89,7 @@ def format_departures(departures):
     if departures == None:
         return "Inga avgångar hittade!"
     if type(departures) == dict:
-        # Only one departure
-        print("hello")
-        direction = departures.get("direction").split(" via ")[0].split(", ")[0]
-        return ({
-            "sname": departures.get("sname"),
-            "direction": direction,
-            "departures": [calculate_minutes(departures)],
-            "fgColor": departures.get("fgColor"),
-            "bgColor": departures.get("bgColor")
-        })
+        departures = [departures]
 
     # Information needed:
     # Line nr
@@ -115,24 +98,12 @@ def format_departures(departures):
     # Colours
     # Sorted by line number
     arr = []
-    # print(departures[0], departures[0].get("rtTime"), "\n")
 
     for dep in departures:
         direction = dep.get("direction").split(" via ")[0].split(", ")[0]
-        if len(arr) == 0:
-            # First departure has to be added manually
-            # The loop doesn't work if there isn't anything in arr
-            arr.append({
-                "sname": dep.get("sname"),
-                "direction": direction,
-                "departures": [calculate_minutes(dep)],
-                "fgColor": dep.get("fgColor"),
-                "bgColor": dep.get("bgColor")
-            })
-            continue
 
-        i = 0
         added = False
+        i = 0
         while i < len(arr):
             # Check if one similar departure is in the list
             # Add the second departure time to the departure dict
@@ -170,9 +141,17 @@ def sort_departures(arr):
 
     # Sort firstly by line number and secondly by destination
     sorted_by_destination = sorted(arr, key=lambda dep: dep["direction"])
-    sorted_by_line = sorted(sorted_by_destination, key=lambda dep: int(dep['sname']))
+    sorted_by_line = sorted(sorted_by_destination, key=lambda dep: tryConvert(dep['sname']))
     return sorted_by_line
 
+def tryConvert(value):
+    # Not all lines are denoted by numbers
+    try:
+        return int(value)
+    except ValueError:
+        # Convert the letters to ascii code and make a number from that
+        new = [str(ord(i)) for i in value]
+        return int("".join(new))
 
 # Get minutes until departure
 def calculate_minutes(departure):
@@ -189,9 +168,7 @@ def calculate_minutes(departure):
 
     # Convert it all to minutes
     hour, minutes = d_time.split(":")
-    minutes = int(minutes)
-    minutes += int(hour) * 60
-    # Minutes since midnight
+    minutes = int(minutes) + int(hour) * 60
 
     # Now:
     time_now = datetime.now(tz.gettz("Europe/Stockholm"))
@@ -203,6 +180,8 @@ def calculate_minutes(departure):
     if countdown < -1300:
         # Past midnight, 24 hours = 1440 min
         countdown += 1440
+    elif countdown > 1300:
+        countdown -= 1440
 
     if realtime:
         if countdown <= 0:
@@ -228,8 +207,9 @@ ts = vasttrafik.TrafficSituations(auth)
 chalmers_id = 9021014001960000
 chalmers_tg_id = 9021014001970000
 chalmersplatsen_id = 9021014001961000
-# chalmersplatsen_id = 9021014019792000 # TEST, INTE DEN RIKTIGA (Lillevrå, Kungsbacka)
+# chalmersplatsen_id = 9021014019854000 # For testing (Hjälmared, Kungsbacka)
 kapellplatsen_id = 9021014003760000
+# nordstan_id = 9021014004945000 # For testing
 
 # Traffic disruptions
 situation = {
@@ -250,25 +230,17 @@ def norefresh():
 def getinfo():
     # Get all the info and put it in a dict and send it off!
     deps = get_async_departures([chalmers_id, chalmers_tg_id, chalmersplatsen_id, kapellplatsen_id])
-
-    # cdep = format_departures(get_departures(chalmers_id))
-    # ctgdep = format_departures(get_departures(chalmers_tg_id))
-    # cpdep = format_departures(get_departures(chalmersplatsen_id))
-    # kdep = format_departures(get_departures(kapellplatsen_id))
-    cdep = format_departures(deps[0])
-    ctgdep = format_departures(deps[1])
-    cpdep = format_departures(deps[2])
-    kdep = format_departures(deps[3])
+    fdeps = [format_departures(d) for d in deps]
     disruptions = get_disruptions()
     temperature = openweathermap.get_temperature()
     menu = skolmaten.get_menu()
 
     d = {
         "disruptions": disruptions,
-        "chalmers": cdep,
-        "chalmerstg": ctgdep,
-        "chalmersplatsen": cpdep,
-        "kapellplatsen": kdep,
+        "chalmers": fdeps[0],
+        "chalmerstg": fdeps[1],
+        "chalmersplatsen": fdeps[2],
+        "kapellplatsen": fdeps[3],
         "temperature": temperature,
         "menu": menu,
         "updated": datetime.now(tz.gettz("Europe/Stockholm")).strftime("%Y-%m-%d %H:%M:%S%z")
