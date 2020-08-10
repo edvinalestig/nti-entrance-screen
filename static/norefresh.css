@@ -99,16 +99,14 @@ div {
     background-color: rgba(20, 20, 20, 0.50);
     color: white;
     border-radius: 10px;
-    backdrop-filter: blur(3px);
 }
 
 #temperature div {
-    background-color: transparent;
+    background-color: #00000000;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0;
-    backdrop-filter: none;
     /* padding: 0; */
 }
 
