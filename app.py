@@ -16,7 +16,7 @@ app = Flask(__name__)
 # Return list of tuples
 def get_disruptions():
     # Uses tz.gettz("Europe/Stockholm") to get Swedish time
-    # The server is (was?) based in Ireland and uses the wrong time without it
+    # The server is based in US and uses the wrong time without it
 
     # Checks if 3 minutes have passed since the last update of disruptions
     if situation["updated"] < datetime.now(tz.gettz("Europe/Stockholm")) - timedelta(minutes=3):
