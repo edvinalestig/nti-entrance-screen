@@ -206,8 +206,6 @@ ts = vasttrafik.TrafficSituations(auth)
 # Stop ids
 chalmers_id = 9021014001960000
 chalmers_tg_id = 9021014001970000
-chalmersplatsen_id = 9021014001961000
-# chalmersplatsen_id = 9021014019854000 # For testing (Hjälmared, Kungsbacka)
 kapellplatsen_id = 9021014003760000
 # nordstan_id = 9021014004945000 # For testing
 
@@ -229,7 +227,7 @@ def norefresh():
 @app.route("/getinfo")
 def getinfo():
     # Get all the info and put it in a dict and send it off!
-    deps = get_async_departures([chalmers_id, chalmers_tg_id, chalmersplatsen_id, kapellplatsen_id])
+    deps = get_async_departures([chalmers_id, chalmers_tg_id, kapellplatsen_id])
     fdeps = [format_departures(d) for d in deps]
     disruptions = get_disruptions()
     temperature = openweathermap.get_temperature()
@@ -239,8 +237,7 @@ def getinfo():
         "disruptions": disruptions,
         "chalmers": fdeps[0],
         "chalmerstg": fdeps[1],
-        "chalmersplatsen": fdeps[2],
-        "kapellplatsen": fdeps[3],
+        "kapellplatsen": fdeps[2],
         "temperature": temperature,
         "menu": menu,
         "updated": datetime.now(tz.gettz("Europe/Stockholm")).strftime("%Y-%m-%d %H:%M:%S%z")

@@ -190,7 +190,7 @@ function updateScreen() {
     printDisruption(data.disruptions);
     printDepartures("chalmers", data.chalmers);
     printDepartures("chalmerstg", data.chalmerstg);
-    printDepartures("chalmersplatsen", data.chalmersplatsen);
+    // printDepartures("chalmersplatsen", data.chalmersplatsen);
     printDepartures("kapellplatsen", data.kapellplatsen);
     printTemperature(data.temperature)
     printMenu(data.menu);
@@ -258,7 +258,7 @@ function createElements(dep, table) {
     // Line number
     const line = document.createElement("td");
     line.classList.add("line");
-    line.style = "background-color: " + dep.fgColor + "; color: " + dep.bgColor + ";";
+    line.style = "background-color: " + dep.bgColor + "; color: " + dep.fgColor + ";";
     line.innerHTML = dep.sname;
     row.appendChild(line);
     // Destination

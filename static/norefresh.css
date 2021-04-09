@@ -140,12 +140,7 @@ table {
 
 #chalmerstg {
     grid-column: 3/4;
-    grid-row: span 3;
-}
-
-#chalmersplatsen {
-    grid-column: 3/4;
-    grid-row: span 2;
+    grid-row: 3/8;
 }
 
 #skolmaten {
